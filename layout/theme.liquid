@@ -296,6 +296,16 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
+    <!-- Aperitivo Theme Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      h1, h2, h3, h4, h5, h6, .heading {
+        font-family: 'Playfair Display', serif !important;
+      }
+      body, .footer, .secondary-text {
+        font-family: 'Roboto', Arial, sans-serif !important;
+      }
+    </style>
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
