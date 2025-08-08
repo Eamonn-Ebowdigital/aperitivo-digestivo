@@ -1,0 +1,201 @@
+{%- comment -%}
+  Detailed Product Builder
+  Minimal stub section so the template can render in the editor.
+  Expand with blocks/settings as needed.
+{%- endcomment -%}
+
+<section class="section section--detailed-product-builder">
+  <div class="page-width">
+    {% if section.settings.heading != blank %}
+      <h2 class="h2">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if section.settings.content != blank %}
+      <div class="rte">{{ section.settings.content }}</div>
+    {% endif %}
+
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'text' %}
+          <p>{{ block.settings.text }}</p>
+        {% when 'subheading' %}
+          <h3 class="h3">{{ block.settings.subheading }}</h3>
+        {% when 'spacer' %}
+          <div style="height: {{ block.settings.height }}px"></div>
+        {% when 'richtext' %}
+          <div class="rte">{{ block.settings.richtext }}</div>
+        {% when 'image' %}
+          {% if block.settings.image != blank %}
+            <div class="builder-image" style="text-align: {{ block.settings.alignment }};">
+              <img
+                src="{{ block.settings.image | image_url: width: block.settings.max_width }}"
+                alt="{{ block.settings.alt | escape }}"
+                loading="lazy"
+                width="{{ block.settings.image.width }}"
+                height="{{ block.settings.image.height }}"
+                style="max-width: {{ block.settings.max_width }}px; width: 100%; height: auto;"
+              >
+            </div>
+          {% endif %}
+        {% when 'button' %}
+          {% if block.settings.link != blank and block.settings.label != blank %}
+            <div class="builder-button" style="text-align: {{ block.settings.alignment }};">
+              <a href="{{ block.settings.link }}" class="button button--primary">{{ block.settings.label }}</a>
+            </div>
+          {% endif %}
+        {% when 'divider' %}
+          <hr class="builder-divider"/>
+        {% when 'liquid' %}
+          {{ block.settings.custom_liquid }}
+        {% when 'product' %}
+          {% if block.settings.product != blank %}
+            <div class="builder-product">
+              {% render 'card-product', card_product: block.settings.product, section_id: section.id, show_vendor: block.settings.show_vendor, quick_add: 'standard' %}
+            </div>
+          {% endif %}
+        {% when 'collection' %}
+          {% if block.settings.collection != blank %}
+            {%- assign cols = block.settings.columns | default: 4 -%}
+            <div class="builder-collection grid grid--2-col-tablet grid--{{ cols }}-col-desktop">
+              {% for prod in block.settings.collection.products limit: block.settings.products_to_show %}
+                <div class="grid__item">
+                  {% render 'card-product', card_product: prod, section_id: section.id, show_vendor: block.settings.show_vendor_collection, quick_add: 'standard' %}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% when 'video' %}
+          {% if block.settings.video_url != blank %}
+            <div class="builder-video" style="aspect-ratio: 16/9;">
+              {% if block.settings.video_url.type == 'youtube' %}
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+              {% elsif block.settings.video_url.type == 'vimeo' %}
+                <iframe src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+              {% endif %}
+            </div>
+          {% endif %}
+      {% endcase %}
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Detailed product builder",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "content", "label": "Content" }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [{ "type": "text", "id": "text", "label": "Text" }]
+    },
+    {
+      "type": "subheading",
+      "name": "Subheading",
+      "settings": [{ "type": "text", "id": "subheading", "label": "Subheading" }]
+    },
+    {
+      "type": "spacer",
+      "name": "Spacer",
+      "settings": [
+        {
+          "type": "range",
+          "id": "height",
+          "label": "Height",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "px",
+          "default": 20
+        }
+      ]
+    },
+    {
+      "type": "richtext",
+      "name": "Rich text",
+      "settings": [
+        { "type": "richtext", "id": "richtext", "label": "Rich text" }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "alt", "label": "Alt text" },
+        { "type": "range", "id": "max_width", "label": "Max width", "min": 100, "max": 2000, "step": 50, "unit": "px", "default": 1200 },
+        { "type": "select", "id": "alignment", "label": "Alignment", "options": [
+          {"value": "left", "label": "Left"},
+          {"value": "center", "label": "Center"},
+          {"value": "right", "label": "Right"}
+        ], "default": "center" }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "select", "id": "alignment", "label": "Alignment", "options": [
+          {"value": "left", "label": "Left"},
+          {"value": "center", "label": "Center"},
+          {"value": "right", "label": "Right"}
+        ], "default": "center" }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider",
+      "settings": []
+    },
+    {
+      "type": "liquid",
+      "name": "Custom liquid",
+      "settings": [
+        { "type": "liquid", "id": "custom_liquid", "label": "Liquid" }
+      ]
+    },
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false }
+      ]
+    },
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 24, "step": 1, "default": 8 },
+        { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 2, "max": 4, "step": 1, "default": 4 },
+        { "type": "checkbox", "id": "show_vendor_collection", "label": "Show vendor", "default": false }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "Video (YouTube/Vimeo)",
+      "settings": [
+        { "type": "video_url", "id": "video_url", "label": "Video URL", "accept": ["youtube", "vimeo"] }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Detailed product builder" }]
+}
+{% endschema %}
+
+{% stylesheet %}
+  .section--detailed-product-builder {
+    padding: 2rem 0;
+  }
+  .builder-divider { margin: 2rem 0; opacity: 0.25; }
+  .builder-button .button { margin-top: 0.5rem; }
+  .builder-collection .grid { row-gap: 2rem; }
+{% endstylesheet %}
