@@ -1,210 +1,249 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
+    "image_with_text_GJ9P8T": {
+      "type": "image-with-text",
       "blocks": {
-        "heading": {
+        "heading_EpREqf": {
           "type": "heading",
           "settings": {
-            "heading": "Image banner",
-            "heading_size": "h0"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "Give customers details about the banner image(s) or content on the template.",
-            "text_style": "body"
-          }
-        },
-        "button": {
-          "type": "buttons",
-          "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
+            "heading": "Products infused with the passion, precision and artistry of culinary culture.",
+            "heading_size": "hxxl"
           }
         }
       },
       "block_order": [
-        "heading",
-        "text",
-        "button"
+        "heading_EpREqf"
       ],
-      "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "desktop_content_position": "bottom-center",
-        "show_text_box": false,
-        "desktop_content_alignment": "center",
-        "color_scheme": "scheme-3",
-        "mobile_content_alignment": "center",
-        "stack_images_on_mobile": false,
-        "show_text_below": false
-      }
-    },
-    "rich_text": {
-      "type": "rich-text",
-      "blocks": {
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "Talk about your brand",
-            "heading_size": "h1"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.<\/p>"
-          }
-        }
-      },
-      "block_order": [
-        "heading",
-        "text"
+      "custom_css": [
+        "img {object-fit: contain;}",
+        ".image-with-text__content {padding-right: 0;}",
+        "h2 {font-size: 5.5em;}"
       ],
+      "name": "t:sections.image-with-text.presets.name",
       "settings": {
-        "color_scheme": "scheme-1",
-        "full_width": true,
-        "padding_top": 40,
-        "padding_bottom": 0
-      }
-    },
-    "featured_collection": {
-      "type": "featured-collection",
-      "settings": {
-        "title": "Featured products",
-        "heading_size": "h2",
-        "collection": "all",
-        "products_to_show": 8,
-        "columns_desktop": 4,
-        "color_scheme": "scheme-1",
-        "show_view_all": false,
-        "swipe_on_mobile": false,
-        "image_ratio": "adapt",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "columns_mobile": "2",
-        "padding_top": 28,
-        "padding_bottom": 36
-      }
-    },
-    "collage": {
-      "type": "collage",
-      "blocks": {
-        "collection-0": {
-          "type": "collection",
-          "settings": {
-            "collection": ""
-          }
-        },
-        "product": {
-          "type": "product",
-          "settings": {
-            "product": "",
-            "second_image": false
-          }
-        },
-        "collection-1": {
-          "type": "collection",
-          "settings": {
-            "collection": ""
-          }
-        }
-      },
-      "block_order": [
-        "collection-0",
-        "product",
-        "collection-1"
-      ],
-      "settings": {
-        "heading": "Multimedia collage",
-        "heading_size": "h2",
-        "desktop_layout": "left",
-        "mobile_layout": "collage",
-        "color_scheme": "scheme-1",
+        "image": "shopify://shop_images/Scott_Collins_Bloodsport_polaroid_1_1.png",
+        "height": "adapt",
+        "desktop_image_width": "small",
+        "layout": "image_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "top",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "scheme-2",
+        "color_scheme": "scheme-2",
         "padding_top": 36,
         "padding_bottom": 36
       }
     },
-    "video": {
-      "type": "video",
-      "settings": {
-        "heading": "",
-        "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
-        "heading_size": "h1",
-        "description": "",
-        "full_width": false,
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "multicolumn": {
+    "multicolumn_rEy46G": {
       "type": "multicolumn",
       "blocks": {
-        "column1": {
+        "column_qQFBXG": {
           "type": "column",
           "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.<\/p>",
+            "image": "shopify://shop_images/Matt.png",
+            "title": "",
+            "text": "",
             "link_label": "",
             "link": ""
           }
         },
-        "column2": {
+        "column_zFzQVB": {
           "type": "column",
           "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.<\/p>",
+            "image": "shopify://shop_images/Hector_Henderson.png",
+            "title": "",
+            "text": "",
             "link_label": "",
             "link": ""
           }
         },
-        "column3": {
+        "column_pm3tFf": {
           "type": "column",
           "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.<\/p>",
+            "image": "shopify://shop_images/Jeremy_Lee.png",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_6XLwmE": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Alice.png",
+            "title": "",
+            "text": "",
             "link_label": "",
             "link": ""
           }
         }
       },
       "block_order": [
-        "column1",
-        "column2",
-        "column3"
+        "column_qQFBXG",
+        "column_zFzQVB",
+        "column_pm3tFf",
+        "column_6XLwmE"
       ],
+      "custom_css": [
+        ".button {color: black; background: none; border: none; font-family: var(--font-heading-family); opacity: 1; font-size: 1.2em;}"
+      ],
+      "name": "t:sections.multicolumn.presets.name",
       "settings": {
         "title": "",
         "heading_size": "h1",
-        "image_width": "third",
+        "image_width": "full",
         "image_ratio": "adapt",
-        "columns_desktop": 3,
-        "column_alignment": "center",
-        "background_style": "none",
-        "button_label": "",
+        "button_label": "Explore the range",
         "button_link": "",
-        "swipe_on_mobile": false,
+        "columns_desktop": 4,
+        "column_alignment": "left",
+        "background_style": "none",
         "color_scheme": "scheme-1",
         "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "image_with_text_qjQqMw": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_LRmBjF": {
+          "type": "heading",
+          "settings": {
+            "heading": "Aperitivo Digestivo is a lifestyle brand born out of London’s hospitality scene.",
+            "heading_size": "hxl"
+          }
+        }
+      },
+      "block_order": [
+        "heading_LRmBjF"
+      ],
+      "custom_css": [
+        "img {object-fit: contain;}"
+      ],
+      "name": "t:sections.image-with-text.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/Ferguson_Henderson_1.png",
+        "height": "adapt",
+        "desktop_image_width": "small",
+        "layout": "text_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "top",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "scheme-2",
+        "color_scheme": "scheme-2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "multicolumn_iA4kfY": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_WUqCzt": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Margaux_Naughty_Piglets_1.png",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_nhH6wP": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Ivo.png",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_xibJ8A": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/The_Clarence_Tavern_1.png",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_WUqCzt",
+        "column_nhH6wP",
+        "column_xibJ8A"
+      ],
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 3,
+        "column_alignment": "left",
+        "background_style": "none",
+        "color_scheme": "scheme-1",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "image_with_text_9TAwN7": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_TajBht": {
+          "type": "heading",
+          "settings": {
+            "heading": "We celebrate the producers, purveyors and consumers of great food and drinks.",
+            "heading_size": "hxl"
+          }
+        }
+      },
+      "block_order": [
+        "heading_TajBht"
+      ],
+      "name": "t:sections.image-with-text.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/Alex_Primuer_1.png",
+        "height": "adapt",
+        "desktop_image_width": "small",
+        "layout": "image_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "top",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "scheme-2",
+        "color_scheme": "scheme-2",
         "padding_top": 36,
         "padding_bottom": 36
       }
     }
   },
   "order": [
-    "image_banner",
-    "rich_text",
-    "featured_collection",
-    "collage",
-    "video",
-    "multicolumn"
+    "image_with_text_GJ9P8T",
+    "multicolumn_rEy46G",
+    "image_with_text_qjQqMw",
+    "multicolumn_iA4kfY",
+    "image_with_text_9TAwN7"
   ]
 }
