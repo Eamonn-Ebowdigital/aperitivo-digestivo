@@ -31,5 +31,5 @@ pipelines:
             - test -n "$SHOPIFY_CLI_THEME_TOKEN" && test -n "$SHOPIFY_FLAG_STORE"
             - export SHOPIFY_FLAG_FORCE=1
             # Push to the Production theme ID, then publish
-            - shopify theme push --json --theme "$THEME_ID_PROD"
+            - shopify theme push --json --allow-live --theme "$THEME_ID_PROD"
             - shopify theme publish --theme "$THEME_ID_PROD" --force
