@@ -1,0 +1,30 @@
+{% for block in section.blocks %}
+  {% case block.type %}
+    {% when 'hero' %}
+      {% render 'dp-block-hero', block: block %}
+
+    {% when 'text_image' %}
+      {% render 'dp-block-text-image', block: block %}
+
+    {% when 'product_highlight' %}
+      {% render 'dp-block-product-highlight', block: block %}
+
+    {% when 'specs' %}
+      {% render 'dp-block-specs', block: block %}
+
+    {% when 'media_gallery' %}
+      {% render 'dp-block-media-gallery', block: block %}
+
+    {% when 'cta_to_pdp' %}
+      {% render 'dp-block-cta-to-pdp', block: block %}
+
+    {% when 'faq' %}
+      {% render 'dp-block-faq', block: block %}
+
+    {% when 'testimonials' %}
+      {% render 'dp-block-testimonials', block: block %}
+
+    {% when 'related_products' %}
+      {% render 'dp-block-related-products', block: block %}
+  {% endcase %}
+{% endfor %}

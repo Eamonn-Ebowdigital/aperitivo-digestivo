@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "detailed-product-builder",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}
