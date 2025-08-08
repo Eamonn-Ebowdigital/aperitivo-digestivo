@@ -1,0 +1,35 @@
+# bitbucket-pipelines.yml
+image: node:20
+
+options:
+  max-time: 30
+
+pipelines:
+  branches:
+    develop:
+      - step:
+          name: Deploy to Development theme
+          caches:
+            - node
+          script:
+            - npm install -g @shopify/cli
+            # Fail fast if required env vars are missing
+            - test -n "$SHOPIFY_CLI_THEME_TOKEN" && test -n "$SHOPIFY_FLAG_STORE"
+            # Non-interactive
+            - export SHOPIFY_FLAG_FORCE=1
+            # Push to a specific DEV theme (recommended)
+            # If THEME_ID_DEV is not set, the next line will error – set it in Repository variables
+            - shopify theme push --json --theme "$THEME_ID_DEV"
+
+    main:
+      - step:
+          name: Deploy to Production theme
+          caches:
+            - node
+          script:
+            - npm install -g @shopify/cli
+            - test -n "$SHOPIFY_CLI_THEME_TOKEN" && test -n "$SHOPIFY_FLAG_STORE"
+            - export SHOPIFY_FLAG_FORCE=1
+            # Push to the Production theme ID, then publish
+            - shopify theme push --json --theme "$THEME_ID_PROD"
+            - shopify theme publish --theme "$THEME_ID_PROD" --force
