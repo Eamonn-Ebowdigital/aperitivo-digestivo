@@ -11,8 +11,28 @@
   "sections": {
     "main": {
       "type": "detailed-product-builder",
-      "settings": {}
+      "blocks": {
+        "editorial_product_feature_kP4bBL": {
+          "type": "editorial_product_feature",
+          "settings": {
+            "metaobject": "{{ page.metafields.content.editorial_feature.value }}",
+            "hero_caption_override": "",
+            "heading_tag": "h2",
+            "heading_colour": "#000000",
+            "band_colour": "#ffd200"
+          }
+        }
+      },
+      "block_order": [
+        "editorial_product_feature_kP4bBL"
+      ],
+      "settings": {
+        "heading": "",
+        "content": ""
+      }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }
