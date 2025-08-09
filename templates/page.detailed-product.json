@@ -15,7 +15,7 @@
         "editorial_product_feature_rFDfnQ": {
           "type": "editorial_product_feature",
           "settings": {
-            "metaobject": "negroni-t-shirt"
+            "metaobject": "{{ page.metafields.content.editorial_feature.value }}"
           }
         }
       },
