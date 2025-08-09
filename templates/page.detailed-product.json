@@ -11,8 +11,24 @@
   "sections": {
     "main": {
       "type": "detailed-product-builder",
-      "settings": {}
+      "blocks": {
+        "editorial_product_feature_rFDfnQ": {
+          "type": "editorial_product_feature",
+          "settings": {
+            "metaobject": "negroni-chore"
+          }
+        }
+      },
+      "block_order": [
+        "editorial_product_feature_rFDfnQ"
+      ],
+      "settings": {
+        "heading": "",
+        "content": ""
+      }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }
