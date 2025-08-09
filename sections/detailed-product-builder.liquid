@@ -44,13 +44,18 @@
             </div>
           {% endif %}
         {% when 'divider' %}
-          <hr class="builder-divider"/>
+          <hr class="builder-divider">
         {% when 'liquid' %}
           {{ block.settings.custom_liquid }}
         {% when 'product' %}
           {% if block.settings.product != blank %}
             <div class="builder-product">
-              {% render 'card-product', card_product: block.settings.product, section_id: section.id, show_vendor: block.settings.show_vendor, quick_add: 'standard' %}
+              {% render 'card-product',
+                card_product: block.settings.product,
+                section_id: section.id,
+                show_vendor: block.settings.show_vendor,
+                quick_add: 'standard'
+              %}
             </div>
           {% endif %}
         {% when 'collection' %}
@@ -59,7 +64,12 @@
             <div class="builder-collection grid grid--2-col-tablet grid--{{ cols }}-col-desktop">
               {% for prod in block.settings.collection.products limit: block.settings.products_to_show %}
                 <div class="grid__item">
-                  {% render 'card-product', card_product: prod, section_id: section.id, show_vendor: block.settings.show_vendor_collection, quick_add: 'standard' %}
+                  {% render 'card-product',
+                    card_product: prod,
+                    section_id: section.id,
+                    show_vendor: block.settings.show_vendor_collection,
+                    quick_add: 'standard'
+                  %}
                 </div>
               {% endfor %}
             </div>
@@ -68,12 +78,72 @@
           {% if block.settings.video_url != blank %}
             <div class="builder-video" style="aspect-ratio: 16/9;">
               {% if block.settings.video_url.type == 'youtube' %}
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+                <iframe
+                  width="560"
+                  height="315"
+                  src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}"
+                  title="YouTube video"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen
+                  loading="lazy"
+                ></iframe>
               {% elsif block.settings.video_url.type == 'vimeo' %}
-                <iframe src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                <iframe
+                  src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}"
+                  width="640"
+                  height="360"
+                  frameborder="0"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"
+                ></iframe>
               {% endif %}
             </div>
           {% endif %}
+        {% when 'editorial_product_feature' %}
+          {% assign mo = block.settings.metaobject %}
+          {% if mo != blank %}
+            <div class="editorial-feature">
+              <div class="feature-row">
+                <div class="feature-hero">
+                  <img src="{{ mo.hero_image | img_url: 'master' }}" alt="{{ mo.title | escape }}">
+                </div>
+                <div class="feature-intro" style="background-color: {{ mo.intro_bg_colour }}">
+                  <div class="feature-intro-text">
+                    <p class="intro-copy">{{ mo.intro_text }}</p>
+                    <h2>{{ mo.title }}</h2>
+                    <p class="price">{{ mo.price }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="feature-gallery">
+                {% if mo.secondary_image_1 != blank %}
+                  <figure>
+                    <img
+                      src="{{ mo.secondary_image_1 | img_url: 'master' }}"
+                    >
+                  </figure>
+                {% endif %}
+
+                {% if mo.secondary_image_2 != blank %}
+                  <figure>
+                    <img
+                      src="{{ mo.secondary_image_2 | img_url: 'master' }}"
+                    >
+                  </figure>
+                {% endif %}
+              </div>
+
+              {% if mo.description != blank %}
+                <div class="feature-description">
+                  {{ mo.description }}
+                </div>
+              {% endif %}
+            </div>
+          {% endif -%}
+          }
       {% endcase %}
     {% endfor %}
   </div>
@@ -90,100 +160,15 @@
   ],
   "blocks": [
     {
-      "type": "text",
-      "name": "Text",
-      "settings": [{ "type": "text", "id": "text", "label": "Text" }]
-    },
-    {
-      "type": "subheading",
-      "name": "Subheading",
-      "settings": [{ "type": "text", "id": "subheading", "label": "Subheading" }]
-    },
-    {
-      "type": "spacer",
-      "name": "Spacer",
+      "type": "editorial_product_feature",
+      "name": "Editorial product feature",
       "settings": [
         {
-          "type": "range",
-          "id": "height",
-          "label": "Height",
-          "min": 0,
-          "max": 100,
-          "step": 5,
-          "unit": "px",
-          "default": 20
+          "type": "metaobject",
+          "id": "metaobject",
+          "label": "Editorial product metaobject",
+          "metaobject_type": "editorial_product_feature"
         }
-      ]
-    },
-    {
-      "type": "richtext",
-      "name": "Rich text",
-      "settings": [
-        { "type": "richtext", "id": "richtext", "label": "Rich text" }
-      ]
-    },
-    {
-      "type": "image",
-      "name": "Image",
-      "settings": [
-        { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "text", "id": "alt", "label": "Alt text" },
-        { "type": "range", "id": "max_width", "label": "Max width", "min": 100, "max": 2000, "step": 50, "unit": "px", "default": 1200 },
-        { "type": "select", "id": "alignment", "label": "Alignment", "options": [
-          {"value": "left", "label": "Left"},
-          {"value": "center", "label": "Center"},
-          {"value": "right", "label": "Right"}
-        ], "default": "center" }
-      ]
-    },
-    {
-      "type": "button",
-      "name": "Button",
-      "settings": [
-        { "type": "text", "id": "label", "label": "Label" },
-        { "type": "url", "id": "link", "label": "Link" },
-        { "type": "select", "id": "alignment", "label": "Alignment", "options": [
-          {"value": "left", "label": "Left"},
-          {"value": "center", "label": "Center"},
-          {"value": "right", "label": "Right"}
-        ], "default": "center" }
-      ]
-    },
-    {
-      "type": "divider",
-      "name": "Divider",
-      "settings": []
-    },
-    {
-      "type": "liquid",
-      "name": "Custom liquid",
-      "settings": [
-        { "type": "liquid", "id": "custom_liquid", "label": "Liquid" }
-      ]
-    },
-    {
-      "type": "product",
-      "name": "Product",
-      "settings": [
-        { "type": "product", "id": "product", "label": "Product" },
-        { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false }
-      ]
-    },
-    {
-      "type": "collection",
-      "name": "Collection",
-      "settings": [
-        { "type": "collection", "id": "collection", "label": "Collection" },
-        { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 24, "step": 1, "default": 8 },
-        { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 2, "max": 4, "step": 1, "default": 4 },
-        { "type": "checkbox", "id": "show_vendor_collection", "label": "Show vendor", "default": false }
-      ]
-    },
-    {
-      "type": "video",
-      "name": "Video (YouTube/Vimeo)",
-      "settings": [
-        { "type": "video_url", "id": "video_url", "label": "Video URL", "accept": ["youtube", "vimeo"] }
       ]
     }
   ],
@@ -195,7 +180,104 @@
   .section--detailed-product-builder {
     padding: 2rem 0;
   }
-  .builder-divider { margin: 2rem 0; opacity: 0.25; }
-  .builder-button .button { margin-top: 0.5rem; }
-  .builder-collection .grid { row-gap: 2rem; }
+  .builder-divider {
+    margin: 2rem 0;
+    opacity: 0.25;
+  }
+  .builder-button .button {
+    margin-top: 0.5rem;
+  }
+  .builder-collection .grid {
+    row-gap: 2rem;
+  }
+
+  .editorial-feature {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    font-family: 'Times New Roman', serif;
+  }
+
+  .feature-row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .feature-hero img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .feature-hero {
+    flex: 1 1 50%;
+    min-width: 300px;
+  }
+
+  .feature-intro {
+    flex: 1 1 50%;
+    background-color: #ffd200; /* matches the yellow in your screenshot */
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .feature-intro .intro-inner {
+    color: #000;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .feature-intro .feature-title {
+    font-weight: bold;
+    margin-top: 1rem;
+  }
+
+  .feature-intro .feature-price {
+    font-weight: normal;
+    margin-top: 0.5rem;
+  }
+
+  .feature-supporting {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .feature-supporting figure {
+    flex: 0 1 auto;
+    margin: 0;
+    text-align: center;
+  }
+
+  .feature-supporting figcaption {
+    font-style: italic;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+  }
+
+  .feature-description-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .feature-description {
+    flex: 1 1 60%;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .feature-tertiary {
+    flex: 1 1 35%;
+    margin: 0;
+    text-align: center;
+  }
+
+  .feature-tertiary figcaption {
+    font-style: italic;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+  }
 {% endstylesheet %}
