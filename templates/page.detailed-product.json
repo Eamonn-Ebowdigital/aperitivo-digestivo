@@ -11,36 +11,8 @@
   "sections": {
     "main": {
       "type": "detailed-product-builder",
-      "blocks": {
-        "editorial_product_feature_n6ajaL": {
-          "type": "editorial_product_feature",
-          "settings": {
-            "metaobject": "{{ page.metafields.content.editorial_feature.value }}",
-            "hero_caption_override": "",
-            "band_height": 200,
-            "hero_width": 270,
-            "small_width": 200,
-            "tertiary_width": 380,
-            "horizontal_padding": 5,
-            "vertical_offset": 75,
-            "heading_tag": "h1",
-            "heading_size": 45,
-            "heading_weight": 650,
-            "heading_colour": "#000000",
-            "band_colour": "#f6c100"
-          }
-        }
-      },
-      "block_order": [
-        "editorial_product_feature_n6ajaL"
-      ],
-      "settings": {
-        "heading": "",
-        "content": ""
-      }
+      "settings": {}
     }
   },
-  "order": [
-    "main"
-  ]
+  "order": ["main"]
 }
