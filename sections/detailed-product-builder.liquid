@@ -123,6 +123,16 @@
           >
             <div class="editorial-feature__stage">
               <div class="editorial-feature__band" aria-hidden="true"></div>
+              
+              <!-- Main title at top -->
+              <div class="editorial-feature__main-title">
+                {{ feature.title | default: feature.name | escape }}
+              </div>
+              
+              <!-- Intro text in top right -->
+              <div class="editorial-feature__intro-text">
+                {{ feature.intro_text | default: "In the face of a World driven by hype, fast fashion and rapidly changing trends we create high quality, timeless and joyful garments that will stand the test of time. We work with amazing artists and manufacturers who produce for very well-known luxury brands to bring you premium products that make a statement." }}
+              </div>
 
               {%- assign hero_image = feature.hero_image | default: feature.image | default: feature.featured_image -%}
               {%- assign small_image = feature.secondary_image | default: feature.supporting_image -%}
@@ -132,17 +142,14 @@
                 <figure class="polaroid polaroid--hero">
                   <div class="polaroid__frame">
                     <img
-                      src="{{ hero_image | image_url: width: 800 }}"
+                      src="{{ hero_image | image_url: width: 474 }}"
                       alt="{{ hero_image.alt | default: block.settings.hero_caption_override | escape }}"
                       loading="lazy"
-                      width="{{ hero_image.width }}"
-                      height="{{ hero_image.height }}"
+                      width="474"
+                      height="564"
                     >
                   </div>
-                  {% assign hero_caption = block.settings.hero_caption_override
-                    | default: feature.hero_caption
-                    | default: feature.caption
-                  %}
+                  {% assign hero_caption = block.settings.hero_caption_override | default: feature.hero_caption | default: feature.caption %}
                   {% if hero_caption != blank %}
                     <figcaption class="polaroid__caption">{{ hero_caption }}</figcaption>
                   {% endif %}
@@ -153,11 +160,11 @@
                 <figure class="polaroid polaroid--small">
                   <div class="polaroid__frame">
                     <img
-                      src="{{ small_image | image_url: width: 600 }}"
+                      src="{{ small_image | image_url: width: 274 }}"
                       alt="{{ small_image.alt | escape }}"
                       loading="lazy"
-                      width="{{ small_image.width }}"
-                      height="{{ small_image.height }}"
+                      width="274"
+                      height="326"
                     >
                   </div>
                   {% if feature.small_caption != blank %}
@@ -170,11 +177,11 @@
                 <figure class="polaroid polaroid--tertiary">
                   <div class="polaroid__frame">
                     <img
-                      src="{{ tertiary_image | image_url: width: 900 }}"
+                      src="{{ tertiary_image | image_url: width: 406 }}"
                       alt="{{ tertiary_image.alt | escape }}"
                       loading="lazy"
-                      width="{{ tertiary_image.width }}"
-                      height="{{ tertiary_image.height }}"
+                      width="406"
+                      height="483"
                     >
                   </div>
                   {% if feature.tertiary_caption != blank %}
@@ -190,15 +197,21 @@
                 {% endif %}
                 {% assign title_tag = block.settings.heading_tag | default: 'h2' %}
                 <{{ title_tag }} class="feature-title">
-                  {{- feature.title | default: feature.name | escape -}}
+                  {{- feature.product_name | default: "Negroni T-Shirt" | escape -}}
                 </{{ title_tag }}>
                 {% if feature.price_copy != blank %}
                   <p class="feature-price">{{ feature.price_copy }}</p>
+                {% else %}
+                  <p class="feature-price">£XX</p>
                 {% endif %}
               </div>
 
               {% if feature.description != blank %}
                 <div class="editorial-feature__description rte">{{ feature.description }}</div>
+              {% else %}
+                <div class="editorial-feature__description">
+                  The 'Negroni' T-Shirt is 100% heavyweight cotton, designed for durability and longevity. It features original artwork from London Artist Toby Ursell, including our classic Negroni motif on the chest and our Aperitivo Digestivo vintage corkscrew on the back. The premium quality fabric and sturdy collar construction ensures that this T-Shirt will be a wardrobe staple for years to come. It's available in both white and navy.
+                </div>
               {% endif %}
             </div>
           </div>
@@ -383,38 +396,47 @@
     margin-top: 0.25rem;
     text-align: center;
   }
-  /* Editorial feature layout - Match exact design */
+  /* Editorial feature layout - Based on exact reference code */
   .editorial-feature { 
     position: relative; 
     margin: 4rem 0; 
   }
   .editorial-feature__stage { 
     position: relative; 
-    background: #000; 
-    overflow: hidden; 
-    min-height: 600px;
-    padding: 0;
+    width: 1301px;
+    height: 1438px;
+    margin: 0 auto;
+    background: transparent;
+  }
+  .editorial-feature__stage::before {
+    content: '';
+    position: absolute;
+    width: 1300px; 
+    height: 1384px; 
+    left: 1px; 
+    top: 54px; 
+    background: white;
+    z-index: 1;
   }
   .editorial-feature__band { 
     position: absolute; 
-    top: 50%; 
-    transform: translateY(-50%);
-    left: 0; 
-    width: 100%; 
-    height: 200px; 
-    background: var(--band-col, #ffd200); 
-    z-index: 1;
+    width: 1300px; 
+    height: 399px; 
+    left: 0px; 
+    top: 207px; 
+    background: var(--band-col, #F6C100);
+    z-index: 2;
   }
   .polaroid { 
     position: absolute; 
-    background: #fff; 
-    padding: 15px 15px 40px 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25); 
-    z-index: 2;
+    z-index: 3;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
   }
   .polaroid__frame { 
     position: relative;
-    background: #fff;
+    background: transparent;
   }
   .polaroid__frame img { 
     width: 100%; 
@@ -422,78 +444,210 @@
     display: block; 
   }
   .polaroid__caption { 
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    right: 0;
-    font-family: 'Brush Script MT', cursive, var(--font-heading-family); 
-    font-size: 16px; 
-    text-align: center; 
-    color: #333;
-    line-height: 1.2;
-    font-weight: 400;
-    transform: rotate(-2deg);
+    display: none; /* Hide captions to match reference */
   }
   .polaroid--hero { 
-    top: 80px; 
-    left: 120px; 
-    width: 200px; 
-    transform: rotate(-8deg);
+    width: 474.25px; 
+    height: 564px; 
+    left: 186px; 
+    top: 118px;
+    transform: none;
   }
   .polaroid--small { 
-    top: 180px; 
-    right: 150px; 
-    width: 180px; 
-    transform: rotate(4deg);
+    width: 274.12px; 
+    height: 326px; 
+    left: 976px; 
+    top: 390px;
+    transform: none;
   }
   .polaroid--tertiary { 
-    bottom: 80px; 
-    right: 100px; 
-    width: 220px; 
-    transform: rotate(-3deg);
+    width: 406.14px; 
+    height: 483px; 
+    left: 794px; 
+    top: 751px;
+    transform: none;
   }
   .editorial-feature__copy { 
     position: absolute; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%);
-    width: 350px; 
-    color: #000; 
-    font-family: var(--font-body-family); 
-    z-index: 3;
+    width: 198px; 
+    height: 74px; 
+    left: 653px; 
+    top: 500px;
+    color: black; 
+    font-size: 20px; 
+    font-family: 'Playfair Display', var(--font-heading-family); 
+    font-weight: 400; 
+    line-height: 30px;
+    z-index: 4;
     text-align: left;
-    padding: 20px;
+    padding: 0;
   }
   .editorial-feature__copy .intro-text { 
-    font-size: 14px; 
-    line-height: 1.4; 
-    margin: 0 0 8px; 
-    text-transform: uppercase; 
-    letter-spacing: 1px; 
-    font-weight: 500;
+    display: none; /* Hide intro text to match reference */
   }
   .editorial-feature .feature-title { 
-    font-family: var(--font-heading-family); 
-    font-size: 24px; 
-    font-weight: 700; 
-    color: var(--title-col, #000); 
-    margin: 8px 0; 
-    line-height: 1.2; 
+    font-family: 'Playfair Display', var(--font-heading-family); 
+    font-size: 20px; 
+    font-weight: 400; 
+    color: var(--title-col, black); 
+    margin: 0; 
+    line-height: 30px; 
   }
   .editorial-feature .feature-price { 
-    font-size: 14px; 
-    margin: 4px 0 0; 
-    font-weight: 600; 
+    font-size: 20px; 
+    margin: 0; 
+    font-weight: 400; 
+    font-family: 'Playfair Display', var(--font-heading-family);
+    line-height: 30px;
   }
   .editorial-feature__description { 
     position: absolute; 
-    bottom: 60px; 
-    left: 120px; 
-    max-width: 450px; 
-    color: #fff; 
-    font-size: 14px; 
-    line-height: 1.5; 
-    z-index: 2;
+    width: 583px; 
+    height: 472px; 
+    left: 89px; 
+    top: 830px;
+    color: black; 
+    font-size: 24px; 
+    font-family: 'Playfair Display', var(--font-heading-family); 
+    font-weight: 400; 
+    line-height: 37px;
+    z-index: 4;
+  }
+  .editorial-feature__intro-text {
+    position: absolute;
+    width: 495px; 
+    height: 269px; 
+    left: 721px; 
+    top: 54px;
+    color: black; 
+    font-size: 24px; 
+    font-family: 'Playfair Display', var(--font-heading-family); 
+    font-weight: 400; 
+    line-height: 37px;
+    z-index: 4;
+  }
+  .editorial-feature__main-title {
+    position: absolute;
+    width: 360px; 
+    height: 22px; 
+    left: 77px; 
+    top: 0px;
+    color: black; 
+    font-size: 48px; 
+    font-family: 'Playfair Display', var(--font-heading-family); 
+    font-weight: 400; 
+    line-height: 16px;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  @media (max-width: 1400px) {
+    .editorial-feature__stage {
+      width: 100%;
+      height: auto;
+      min-height: 800px;
+      padding: 2rem;
+    }
+    .editorial-feature__stage::before {
+      width: calc(100% - 2px);
+      height: calc(100% - 54px);
+    }
+    .editorial-feature__band {
+      width: 100%;
+      left: 0;
+    }
+    .polaroid--hero { 
+      left: 10%; 
+      width: 30%;
+      height: auto;
+    }
+    .polaroid--small { 
+      left: 70%; 
+      width: 25%;
+      height: auto;
+    }
+    .polaroid--tertiary { 
+      left: 60%; 
+      width: 35%;
+      height: auto;
+    }
+    .editorial-feature__copy {
+      left: 45%;
+      width: 200px;
+    }
+    .editorial-feature__description {
+      left: 5%;
+      width: 45%;
+      height: auto;
+    }
+    .editorial-feature__intro-text {
+      left: 55%;
+      width: 38%;
+      height: auto;
+    }
+    .editorial-feature__main-title {
+      left: 5%;
+      width: 50%;
+    }
+  }
+  @media (max-width: 900px) {
+    .editorial-feature__stage {
+      background: white;
+      padding: 1rem;
+      min-height: auto;
+    }
+    .editorial-feature__stage::before {
+      display: none;
+    }
+    .editorial-feature__band {
+      position: static;
+      width: calc(100% + 2rem);
+      height: auto;
+      min-height: 100px;
+      margin: 2rem -1rem;
+      left: auto;
+      top: auto;
+    }
+    .polaroid, .polaroid--hero, .polaroid--small, .polaroid--tertiary {
+      position: static;
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      margin: 2rem auto;
+      left: auto;
+      top: auto;
+      display: block;
+    }
+    .editorial-feature__copy {
+      position: static;
+      width: 100%;
+      text-align: center;
+      left: auto;
+      top: auto;
+    }
+    .editorial-feature__description {
+      position: static;
+      width: 100%;
+      margin: 2rem auto 0;
+      left: auto;
+      top: auto;
+    }
+    .editorial-feature__intro-text {
+      position: static;
+      width: 100%;
+      margin: 2rem auto;
+      left: auto;
+      top: auto;
+    }
+    .editorial-feature__main-title {
+      position: static;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 2rem;
+      left: auto;
+      top: auto;
+    }
   }
   @media (max-width: 1200px) {
     .editorial-feature__stage {
