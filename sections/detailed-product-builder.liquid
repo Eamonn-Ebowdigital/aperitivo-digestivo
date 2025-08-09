@@ -108,10 +108,23 @@
           {%- endif -%}
 
           {%- comment -%}
-            Optional per-block style variables (safe defaults if you don't add schema fields):
-            heading_tag: h2, heading_size: 28, heading_weight: 700, heading_colour: #000, band_colour: #ffd200
+            Robust hero image resolution: accept multiple possible field names.
           {%- endcomment -%}
-          {%- assign Tag = block.settings.heading_tag | default: 'h2' -%}
+          {%- assign hero_image_ref = mo.hero_image
+            | default: mo.hero
+            | default: mo.image
+            | default: mo.feature_image
+          -%}
+          {%- assign secondary_image_ref = mo.secondary_image_1
+            | default: mo.secondary_1
+            | default: mo.supporting_image_1
+          -%}
+          {%- assign tertiary_image_ref = mo.tertiary_image
+            | default: mo.secondary_image_2
+            | default: mo.supporting_image_large
+          -%}
+
+          {%- assign heading_tag = block.settings.heading_tag | default: 'h2' -%}
           {%- assign heading_size = block.settings.heading_size | default: 28 -%}
           {%- assign heading_weight = block.settings.heading_weight | default: 700 -%}
           {%- assign heading_colour = block.settings.heading_colour | default: '#000000' -%}
@@ -122,48 +135,80 @@
               class="editorial-feature"
               style="--band-col: {{ band_colour }}; --title-size: {{ heading_size }}px; --title-weight: {{ heading_weight }}; --title-col: {{ heading_colour }};"
             >
-              <!-- Top row: hero (left) + full-bleed band with intro (right) -->
-              <div class="feature-row">
-                <div class="feature-hero">
-                  {% if mo.hero_image %}
-                    <img src="{{ mo.hero_image | image_url: width: 1600 }}" alt="{{ mo.title | escape }}">
+              <div class="feature-canvas">
+                <!-- Yellow band -->
+                <div class="feature-band" aria-hidden="true"></div>
+
+                <!-- Hero Polaroid -->
+                {% if hero_image_ref %}
+                  <figure class="polaroid polaroid--hero">
+                    <div class="polaroid__frame">
+                      <img
+                        src="{{ hero_image_ref | image_url: width: 1200 }}"
+                        alt="{{ mo.title | escape }}"
+                        loading="lazy"
+                        width="{{ hero_image_ref.width | default: 1200 }}"
+                        height="{{ hero_image_ref.height | default: 1600 }}"
+                      >
+                    </div>
+                    {% if mo.hero_caption or block.settings.hero_caption_override %}
+                      <figcaption class="polaroid__caption">
+                        {{ block.settings.hero_caption_override | default: mo.hero_caption }}
+                      </figcaption>
+                    {% endif %}
+                  </figure>
+                {% endif %}
+
+                <!-- Intro copy (sits over band) -->
+                <div class="feature-intro-copy">
+                  {% if mo.intro_text %}
+                    <div class="intro-text rte">{{ mo.intro_text }}</div>
+                  {% endif %}
+                  <{{ heading_tag }} class="feature-title">{{ mo.title }}</{{ heading_tag }}>
+                  {% if mo.price %}
+                    <p class="feature-price">{{ mo.price }}</p>
                   {% endif %}
                 </div>
 
-                <div class="feature-intro">
-                  <div class="intro-inner">
-                    {% if mo.intro_text %}{{ mo.intro_text }}{% endif %}
-                    <{{ Tag }} class="feature-title">{{ mo.title }}</{{ Tag }}>
-                    {% if mo.price %}
-                      <p class="feature-price">{{ mo.price }}</p>
+                <!-- Small polaroid overlapping right of band -->
+                {% if secondary_image_ref %}
+                  <figure class="polaroid polaroid--small">
+                    <div class="polaroid__frame">
+                      <img
+                        src="{{ secondary_image_ref | image_url: width: 600 }}"
+                        alt=""
+                        loading="lazy"
+                        width="{{ secondary_image_ref.width | default: 600 }}"
+                        height="{{ secondary_image_ref.height | default: 800 }}"
+                      >
+                    </div>
+                    {% if mo.secondary_caption_1 %}
+                      <figcaption class="polaroid__caption">{{ mo.secondary_caption_1 }}</figcaption>
                     {% endif %}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Supporting images (no captions per your note) -->
-              <div class="feature-supporting">
-                {% if mo.secondary_image_1 %}
-                  <figure class="small left">
-                    <img src="{{ mo.secondary_image_1 | image_url: width: 900 }}" alt="">
                   </figure>
                 {% endif %}
-                {% if mo.secondary_image_2 %}
-                  <figure class="small right">
-                    <img src="{{ mo.secondary_image_2 | image_url: width: 900 }}" alt="">
+
+                <!-- Large lower-right polaroid -->
+                {% if tertiary_image_ref %}
+                  <figure class="polaroid polaroid--tertiary">
+                    <div class="polaroid__frame">
+                      <img
+                        src="{{ tertiary_image_ref | image_url: width: 1000 }}"
+                        alt=""
+                        loading="lazy"
+                        width="{{ tertiary_image_ref.width | default: 1000 }}"
+                        height="{{ tertiary_image_ref.height | default: 1400 }}"
+                      >
+                    </div>
+                    {% if mo.tertiary_caption %}
+                      <figcaption class="polaroid__caption">{{ mo.tertiary_caption }}</figcaption>
+                    {% endif %}
                   </figure>
                 {% endif %}
-              </div>
 
-              <!-- Long description; optional tertiary image on right -->
-              <div class="feature-description-row">
-                <div class="feature-description">
-                  {% if mo.description %}{{ mo.description }}{% endif %}
-                </div>
-                {% if mo.tertiary_image %}
-                  <figure class="feature-tertiary">
-                    <img src="{{ mo.tertiary_image | image_url: width: 1200 }}" alt="">
-                  </figure>
+                <!-- Long description (left of lower large polaroid) -->
+                {% if mo.description %}
+                  <div class="feature-description rte">{{ mo.description }}</div>
                 {% endif %}
               </div>
             </div>
@@ -193,6 +238,7 @@
           "label": "Editorial product metaobject",
           "metaobject_type": "editorial_product_feature"
         },
+        { "type": "text", "id": "hero_caption_override", "label": "Hero caption override" },
         {
           "type": "select",
           "id": "heading_tag",
@@ -246,102 +292,141 @@
     row-gap: 2rem;
   }
 
+  /* Editorial feature redesigned */
   .editorial-feature {
+    --polaroid-bg: #f2f2f2;
+    --polaroid-pad: 0.85rem;
+    --scribble-font: var(--font-heading-family);
+    position: relative;
+  }
+  .feature-canvas {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    background: #000;
+    padding: 6rem 0 5rem;
+  }
+  .feature-band {
+    position: absolute;
+    top: 5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 230px;
+    background: var(--band-col, #ffd200);
+  }
+
+  .polaroid {
+    position: absolute;
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    background: var(--polaroid-bg);
+    box-shadow: 0 12px 26px -4px rgba(0, 0, 0, 0.35);
   }
-
-  .feature-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    align-items: stretch;
+  .polaroid__frame {
+    padding: var(--polaroid-pad);
   }
-  @media (max-width: 900px) {
-    .feature-row {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .feature-hero img {
+  .polaroid__frame img {
+    display: block;
     width: 100%;
     height: auto;
-    display: block;
     object-fit: cover;
   }
+  .polaroid__caption {
+    font-family: var(--scribble-font);
+    font-size: clamp(12px, 1.1vw, 16px);
+    padding: 0 0.85rem 0.9rem;
+    line-height: 1.1;
+  }
 
-  .feature-intro {
-    position: relative;
-    display: flex;
-    align-items: center;
+  .polaroid--hero {
+    top: 2.5rem;
+    left: min(8vw, 7rem);
+    width: clamp(220px, 25vw, 270px);
   }
-  .feature-intro::before {
-    content: '';
+  .polaroid--small {
+    top: 11rem;
+    right: min(9vw, 8rem);
+    width: clamp(170px, 18vw, 200px);
+  }
+  .polaroid--tertiary {
+    bottom: 1.5rem;
+    right: min(6vw, 6rem);
+    width: clamp(260px, 30vw, 360px);
+  }
+
+  .feature-intro-copy {
     position: absolute;
-    inset: 0;
+    top: 6.2rem;
     left: 50%;
-    width: 100vw; /* full-bleed band */
     transform: translateX(-50%);
-    background: var(--band-col, #ffd200);
-    z-index: 0;
-  }
-  .intro-inner {
-    position: relative;
-    z-index: 1;
-    padding: 2.25rem 2rem;
-    max-width: 56ch;
+    max-width: 700px;
+    width: 60%;
     color: #000;
+    font-family: var(--font-body-family);
+  }
+  .feature-intro-copy .intro-text {
+    font-size: clamp(12px, 0.9vw, 15px);
+    line-height: 1.55;
   }
   .feature-title {
+    font-family: var(--font-heading-family);
     font-size: var(--title-size, 28px);
     font-weight: var(--title-weight, 700);
     color: var(--title-col, #000);
-    margin-top: 0.75rem;
+    margin: 1.25rem 0 0.2rem;
     line-height: 1.15;
   }
   .feature-price {
-    margin-top: 0.25rem;
-  }
-
-  .feature-supporting {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 1rem;
-    align-items: start;
-  }
-  .feature-supporting .small {
+    font-size: clamp(11px, 0.8vw, 14px);
     margin: 0;
   }
-  .feature-supporting .small.right {
-    justify-self: end;
-  }
-  .feature-supporting img {
-    display: block;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  }
 
-  .feature-description-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
-  @media (max-width: 1000px) {
-    .feature-description-row {
-      grid-template-columns: 1fr;
-    }
-  }
   .feature-description {
-    max-width: 70ch;
+    position: absolute;
+    bottom: 10.5rem;
+    left: min(8vw, 7rem);
+    max-width: clamp(260px, 28vw, 380px);
+    color: #fff;
+    font-size: clamp(11px, 0.85vw, 14px);
+    line-height: 1.55;
   }
-  .feature-tertiary {
-    margin: 0;
-  }
-  .feature-tertiary img {
-    width: 100%;
-    height: auto;
-    display: block;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  @media (max-width: 1100px) {
+    .feature-canvas {
+      padding-bottom: 8rem;
+    }
+    .feature-description {
+      position: static;
+      max-width: 60ch;
+      margin: 2rem auto 0;
+    }
+    .polaroid--tertiary {
+      position: static;
+      margin: 2.5rem auto 0;
+    }
+    .polaroid--small {
+      top: auto;
+      right: auto;
+      position: static;
+      margin: 2rem auto 0;
+    }
+    .polaroid--hero {
+      position: static;
+      left: auto;
+      top: auto;
+    }
+    .feature-intro-copy {
+      position: static;
+      transform: none;
+      width: 100%;
+      margin: 2rem auto 0;
+    }
+    .feature-band {
+      position: static;
+      width: 100%;
+      height: auto;
+      transform: none;
+      padding: 3rem 0;
+    }
   }
 {% endstylesheet %}
