@@ -11,24 +11,8 @@
   "sections": {
     "main": {
       "type": "detailed-product-builder",
-      "blocks": {
-        "editorial_product_feature_rFDfnQ": {
-          "type": "editorial_product_feature",
-          "settings": {
-            "metaobject": "{{ page.metafields.content.editorial_feature.value }}"
-          }
-        }
-      },
-      "block_order": [
-        "editorial_product_feature_rFDfnQ"
-      ],
-      "settings": {
-        "heading": "",
-        "content": ""
-      }
+      "settings": {}
     }
   },
-  "order": [
-    "main"
-  ]
+  "order": ["main"]
 }
