@@ -102,48 +102,72 @@
             </div>
           {% endif %}
         {% when 'editorial_product_feature' %}
-          {% assign mo = block.settings.metaobject %}
-          {% if mo != blank %}
-            <div class="editorial-feature">
+          {%- assign mo = block.settings.metaobject -%}
+          {%- if mo == blank and page and page.metafields.content and page.metafields.content.editorial_feature -%}
+            {%- assign mo = page.metafields.content.editorial_feature -%}
+          {%- endif -%}
+
+          {%- comment -%}
+            Optional per-block style variables (safe defaults if you don't add schema fields):
+            heading_tag: h2, heading_size: 28, heading_weight: 700, heading_colour: #000, band_colour: #ffd200
+          {%- endcomment -%}
+          {%- assign Tag = block.settings.heading_tag | default: 'h2' -%}
+          {%- assign heading_size = block.settings.heading_size | default: 28 -%}
+          {%- assign heading_weight = block.settings.heading_weight | default: 700 -%}
+          {%- assign heading_colour = block.settings.heading_colour | default: '#000000' -%}
+          {%- assign band_colour = block.settings.band_colour | default: mo.intro_bg_colour | default: '#ffd200' -%}
+
+          {% if mo %}
+            <div
+              class="editorial-feature"
+              style="--band-col: {{ band_colour }}; --title-size: {{ heading_size }}px; --title-weight: {{ heading_weight }}; --title-col: {{ heading_colour }};"
+            >
+              <!-- Top row: hero (left) + full-bleed band with intro (right) -->
               <div class="feature-row">
                 <div class="feature-hero">
-                  <img src="{{ mo.hero_image | img_url: 'master' }}" alt="{{ mo.title | escape }}">
+                  {% if mo.hero_image %}
+                    <img src="{{ mo.hero_image | image_url: width: 1600 }}" alt="{{ mo.title | escape }}">
+                  {% endif %}
                 </div>
-                <div class="feature-intro" style="background-color: {{ mo.intro_bg_colour }}">
-                  <div class="feature-intro-text">
-                    <p class="intro-copy">{{ mo.intro_text }}</p>
-                    <h2>{{ mo.title }}</h2>
-                    <p class="price">{{ mo.price }}</p>
+
+                <div class="feature-intro">
+                  <div class="intro-inner">
+                    {% if mo.intro_text %}{{ mo.intro_text }}{% endif %}
+                    <{{ Tag }} class="feature-title">{{ mo.title }}</{{ Tag }}>
+                    {% if mo.price %}
+                      <p class="feature-price">{{ mo.price }}</p>
+                    {% endif %}
                   </div>
                 </div>
               </div>
 
-              <div class="feature-gallery">
-                {% if mo.secondary_image_1 != blank %}
-                  <figure>
-                    <img
-                      src="{{ mo.secondary_image_1 | img_url: 'master' }}"
-                    >
+              <!-- Supporting images (no captions per your note) -->
+              <div class="feature-supporting">
+                {% if mo.secondary_image_1 %}
+                  <figure class="small left">
+                    <img src="{{ mo.secondary_image_1 | image_url: width: 900 }}" alt="">
                   </figure>
                 {% endif %}
-
-                {% if mo.secondary_image_2 != blank %}
-                  <figure>
-                    <img
-                      src="{{ mo.secondary_image_2 | img_url: 'master' }}"
-                    >
+                {% if mo.secondary_image_2 %}
+                  <figure class="small right">
+                    <img src="{{ mo.secondary_image_2 | image_url: width: 900 }}" alt="">
                   </figure>
                 {% endif %}
               </div>
 
-              {% if mo.description != blank %}
+              <!-- Long description; optional tertiary image on right -->
+              <div class="feature-description-row">
                 <div class="feature-description">
-                  {{ mo.description }}
+                  {% if mo.description %}{{ mo.description }}{% endif %}
                 </div>
-              {% endif %}
+                {% if mo.tertiary_image %}
+                  <figure class="feature-tertiary">
+                    <img src="{{ mo.tertiary_image | image_url: width: 1200 }}" alt="">
+                  </figure>
+                {% endif %}
+              </div>
             </div>
-          {% endif -%}
-          }
+          {% endif %}
       {% endcase %}
     {% endfor %}
   </div>
@@ -168,7 +192,38 @@
           "id": "metaobject",
           "label": "Editorial product metaobject",
           "metaobject_type": "editorial_product_feature"
-        }
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "Heading tag",
+          "default": "h2",
+          "options": [
+            { "value": "h1", "label": "H1" },
+            { "value": "h2", "label": "H2" },
+            { "value": "h3", "label": "H3" }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "heading_size",
+          "label": "Heading size (px)",
+          "min": 20,
+          "max": 64,
+          "step": 1,
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "heading_weight",
+          "label": "Heading weight",
+          "min": 300,
+          "max": 900,
+          "step": 50,
+          "default": 700
+        },
+        { "type": "color", "id": "heading_colour", "label": "Heading colour", "default": "#000000" },
+        { "type": "color", "id": "band_colour", "label": "Band colour", "default": "#ffd200" }
       ]
     }
   ],
@@ -194,90 +249,99 @@
   .editorial-feature {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    font-family: 'Times New Roman', serif;
+    gap: 2.5rem;
   }
 
   .feature-row {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+  @media (max-width: 900px) {
+    .feature-row {
+      grid-template-columns: 1fr;
+    }
   }
 
   .feature-hero img {
     width: 100%;
     height: auto;
     display: block;
-  }
-
-  .feature-hero {
-    flex: 1 1 50%;
-    min-width: 300px;
+    object-fit: cover;
   }
 
   .feature-intro {
-    flex: 1 1 50%;
-    background-color: #ffd200; /* matches the yellow in your screenshot */
-    padding: 2rem;
+    position: relative;
     display: flex;
     align-items: center;
   }
-
-  .feature-intro .intro-inner {
+  .feature-intro::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    left: 50%;
+    width: 100vw; /* full-bleed band */
+    transform: translateX(-50%);
+    background: var(--band-col, #ffd200);
+    z-index: 0;
+  }
+  .intro-inner {
+    position: relative;
+    z-index: 1;
+    padding: 2.25rem 2rem;
+    max-width: 56ch;
     color: #000;
-    font-size: 1rem;
-    line-height: 1.5;
   }
-
-  .feature-intro .feature-title {
-    font-weight: bold;
-    margin-top: 1rem;
+  .feature-title {
+    font-size: var(--title-size, 28px);
+    font-weight: var(--title-weight, 700);
+    color: var(--title-col, #000);
+    margin-top: 0.75rem;
+    line-height: 1.15;
   }
-
-  .feature-intro .feature-price {
-    font-weight: normal;
-    margin-top: 0.5rem;
+  .feature-price {
+    margin-top: 0.25rem;
   }
 
   .feature-supporting {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
     gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    align-items: start;
   }
-
-  .feature-supporting figure {
-    flex: 0 1 auto;
+  .feature-supporting .small {
     margin: 0;
-    text-align: center;
   }
-
-  .feature-supporting figcaption {
-    font-style: italic;
-    font-size: 0.9rem;
-    margin-top: 0.25rem;
+  .feature-supporting .small.right {
+    justify-self: end;
+  }
+  .feature-supporting img {
+    display: block;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   }
 
   .feature-description-row {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
     gap: 2rem;
+    align-items: start;
   }
-
+  @media (max-width: 1000px) {
+    .feature-description-row {
+      grid-template-columns: 1fr;
+    }
+  }
   .feature-description {
-    flex: 1 1 60%;
-    font-size: 1rem;
-    line-height: 1.5;
+    max-width: 70ch;
   }
-
   .feature-tertiary {
-    flex: 1 1 35%;
     margin: 0;
-    text-align: center;
   }
-
-  .feature-tertiary figcaption {
-    font-style: italic;
-    font-size: 0.9rem;
-    margin-top: 0.25rem;
+  .feature-tertiary img {
+    width: 100%;
+    height: auto;
+    display: block;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   }
 {% endstylesheet %}
