@@ -1,13 +1,12 @@
 {%- comment -%}
-  Detailed Product Builder
-  Minimal stub section so the template can render in the editor.
-  Expand with blocks/settings as needed.
+  Detailed Product Builder Section
+  Provides a flexible page builder plus a custom editorial feature block.
 {%- endcomment -%}
 
 <section class="section section--detailed-product-builder">
   <div class="page-width">
     {% if section.settings.heading != blank %}
-      <h2 class="h2">{{ section.settings.heading }}</h2>
+      <h2 class="h2">{{ section.settings.heading | escape }}</h2>
     {% endif %}
 
     {% if section.settings.content != blank %}
@@ -17,202 +16,140 @@
     {% for block in section.blocks %}
       {% case block.type %}
         {% when 'text' %}
-          <p>{{ block.settings.text }}</p>
+          <p {{ block.shopify_attributes }}>{{ block.settings.text }}</p>
+
         {% when 'subheading' %}
-          <h3 class="h3">{{ block.settings.subheading }}</h3>
+          <h3 class="h3" {{ block.shopify_attributes }}>{{ block.settings.subheading }}</h3>
+
         {% when 'spacer' %}
-          <div style="height: {{ block.settings.height }}px"></div>
+          <div style="height: {{ block.settings.height }}px" aria-hidden="true" {{ block.shopify_attributes }}></div>
+
         {% when 'richtext' %}
-          <div class="rte">{{ block.settings.richtext }}</div>
+          <div class="rte" {{ block.shopify_attributes }}>{{ block.settings.richtext }}</div>
+
         {% when 'image' %}
           {% if block.settings.image != blank %}
-            <div class="builder-image" style="text-align: {{ block.settings.alignment }};">
+            <figure class="builder-image" style="text-align: {{ block.settings.alignment }}; max-width: {{ block.settings.max_width }}px;" {{ block.shopify_attributes }}>
               <img
                 src="{{ block.settings.image | image_url: width: block.settings.max_width }}"
                 alt="{{ block.settings.alt | escape }}"
                 loading="lazy"
                 width="{{ block.settings.image.width }}"
                 height="{{ block.settings.image.height }}"
-                style="max-width: {{ block.settings.max_width }}px; width: 100%; height: auto;"
+                style="width:100%;height:auto;"
               >
-            </div>
+              {% if block.settings.caption != blank %}
+                <figcaption class="builder-image__caption">{{ block.settings.caption }}</figcaption>
+              {% endif %}
+            </figure>
           {% endif %}
+
         {% when 'button' %}
           {% if block.settings.link != blank and block.settings.label != blank %}
-            <div class="builder-button" style="text-align: {{ block.settings.alignment }};">
+            <div class="builder-button" style="text-align: {{ block.settings.alignment }};" {{ block.shopify_attributes }}>
               <a href="{{ block.settings.link }}" class="button button--primary">{{ block.settings.label }}</a>
             </div>
           {% endif %}
+
         {% when 'divider' %}
-          <hr class="builder-divider">
+          <hr class="builder-divider" {{ block.shopify_attributes }}>
+
         {% when 'liquid' %}
-          {{ block.settings.custom_liquid }}
+          <div {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
+
         {% when 'product' %}
           {% if block.settings.product != blank %}
-            <div class="builder-product">
-              {% render 'card-product',
-                card_product: block.settings.product,
-                section_id: section.id,
-                show_vendor: block.settings.show_vendor,
-                quick_add: 'standard'
-              %}
+            <div class="builder-product" {{ block.shopify_attributes }}>
+              {% render 'card-product', card_product: block.settings.product %}
             </div>
           {% endif %}
+
         {% when 'collection' %}
           {% if block.settings.collection != blank %}
-            {%- assign cols = block.settings.columns | default: 4 -%}
-            <div class="builder-collection grid grid--2-col-tablet grid--{{ cols }}-col-desktop">
-              {% for prod in block.settings.collection.products limit: block.settings.products_to_show %}
-                <div class="grid__item">
-                  {% render 'card-product',
-                    card_product: prod,
-                    section_id: section.id,
-                    show_vendor: block.settings.show_vendor_collection,
-                    quick_add: 'standard'
-                  %}
-                </div>
-              {% endfor %}
+            <div class="builder-collection" {{ block.shopify_attributes }}>
+              <div class="grid" style="--grid-cols: {{ block.settings.columns }};">
+                {% for product in block.settings.collection.products limit: block.settings.limit %}
+                  <div class="grid__item">
+                    {% render 'card-product', card_product: product %}
+                  </div>
+                {% endfor %}
+              </div>
             </div>
           {% endif %}
+
         {% when 'video' %}
           {% if block.settings.video_url != blank %}
-            <div class="builder-video" style="aspect-ratio: 16/9;">
-              {% if block.settings.video_url.type == 'youtube' %}
-                <iframe
-                  width="560"
-                  height="315"
-                  src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}"
-                  title="YouTube video"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowfullscreen
-                  loading="lazy"
-                ></iframe>
-              {% elsif block.settings.video_url.type == 'vimeo' %}
-                <iframe
-                  src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}"
-                  width="640"
-                  height="360"
-                  frameborder="0"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowfullscreen
-                  loading="lazy"
-                ></iframe>
-              {% endif %}
-            </div>
-          {% endif %}
-        {% when 'editorial_product_feature' %}
-          {%- assign mo = block.settings.metaobject -%}
-          {%- if mo == blank and page and page.metafields.content and page.metafields.content.editorial_feature -%}
-            {%- assign mo = page.metafields.content.editorial_feature -%}
-          {%- endif -%}
-
-          {%- comment -%}
-            Robust hero image resolution: accept multiple possible field names.
-          {%- endcomment -%}
-          {%- assign hero_image_ref = mo.hero_image
-            | default: mo.hero
-            | default: mo.image
-            | default: mo.feature_image
-          -%}
-          {%- assign secondary_image_ref = mo.secondary_image_1
-            | default: mo.secondary_1
-            | default: mo.supporting_image_1
-          -%}
-          {%- assign tertiary_image_ref = mo.tertiary_image
-            | default: mo.secondary_image_2
-            | default: mo.supporting_image_large
-          -%}
-
-          {%- assign heading_tag = block.settings.heading_tag | default: 'h2' -%}
-          {%- assign heading_size = block.settings.heading_size | default: 28 -%}
-          {%- assign heading_weight = block.settings.heading_weight | default: 700 -%}
-          {%- assign heading_colour = block.settings.heading_colour | default: '#000000' -%}
-          {%- assign band_colour = block.settings.band_colour | default: mo.intro_bg_colour | default: '#ffd200' -%}
-
-          {% if mo %}
-            <div
-              class="editorial-feature"
-              style="--band-col: {{ band_colour }}; --title-size: {{ heading_size }}px; --title-weight: {{ heading_weight }}; --title-col: {{ heading_colour }};"
-            >
-              <div class="feature-canvas">
-                <!-- Yellow band -->
-                <div class="feature-band" aria-hidden="true"></div>
-
-                <!-- Hero Polaroid -->
-                {% if hero_image_ref %}
-                  <figure class="polaroid polaroid--hero">
-                    <div class="polaroid__frame">
-                      <img
-                        src="{{ hero_image_ref | image_url: width: 1200 }}"
-                        alt="{{ mo.title | escape }}"
-                        loading="lazy"
-                        width="{{ hero_image_ref.width | default: 1200 }}"
-                        height="{{ hero_image_ref.height | default: 1600 }}"
-                      >
-                    </div>
-                    {% if mo.hero_caption or block.settings.hero_caption_override %}
-                      <figcaption class="polaroid__caption">
-                        {{ block.settings.hero_caption_override | default: mo.hero_caption }}
-                      </figcaption>
-                    {% endif %}
-                  </figure>
-                {% endif %}
-
-                <!-- Intro copy (sits over band) -->
-                <div class="feature-intro-copy">
-                  {% if mo.intro_text %}
-                    <div class="intro-text rte">{{ mo.intro_text }}</div>
-                  {% endif %}
-                  <{{ heading_tag }} class="feature-title">{{ mo.title }}</{{ heading_tag }}>
-                  {% if mo.price %}
-                    <p class="feature-price">{{ mo.price }}</p>
-                  {% endif %}
-                </div>
-
-                <!-- Small polaroid overlapping right of band -->
-                {% if secondary_image_ref %}
-                  <figure class="polaroid polaroid--small">
-                    <div class="polaroid__frame">
-                      <img
-                        src="{{ secondary_image_ref | image_url: width: 600 }}"
-                        alt=""
-                        loading="lazy"
-                        width="{{ secondary_image_ref.width | default: 600 }}"
-                        height="{{ secondary_image_ref.height | default: 800 }}"
-                      >
-                    </div>
-                    {% if mo.secondary_caption_1 %}
-                      <figcaption class="polaroid__caption">{{ mo.secondary_caption_1 }}</figcaption>
-                    {% endif %}
-                  </figure>
-                {% endif %}
-
-                <!-- Large lower-right polaroid -->
-                {% if tertiary_image_ref %}
-                  <figure class="polaroid polaroid--tertiary">
-                    <div class="polaroid__frame">
-                      <img
-                        src="{{ tertiary_image_ref | image_url: width: 1000 }}"
-                        alt=""
-                        loading="lazy"
-                        width="{{ tertiary_image_ref.width | default: 1000 }}"
-                        height="{{ tertiary_image_ref.height | default: 1400 }}"
-                      >
-                    </div>
-                    {% if mo.tertiary_caption %}
-                      <figcaption class="polaroid__caption">{{ mo.tertiary_caption }}</figcaption>
-                    {% endif %}
-                  </figure>
-                {% endif %}
-
-                <!-- Long description (left of lower large polaroid) -->
-                {% if mo.description %}
-                  <div class="feature-description rte">{{ mo.description }}</div>
+            <div class="builder-video" style="text-align: {{ block.settings.alignment }};" {{ block.shopify_attributes }}>
+              <div class="video-wrapper">
+                {% if block.settings.video_url contains 'youtube' %}
+                  <iframe src="https://www.youtube.com/embed/{{ block.settings.video_url | split: 'v=' | last | split: '&' | first }}" title="YouTube video" frameborder="0" allowfullscreen loading="lazy"></iframe>
+                {% elsif block.settings.video_url contains 'vimeo' %}
+                  <iframe src="https://player.vimeo.com/video/{{ block.settings.video_url | split: '/' | last }}" title="Vimeo video" frameborder="0" allowfullscreen loading="lazy"></iframe>
                 {% endif %}
               </div>
             </div>
           {% endif %}
+
+        {% when 'editorial_product_feature' %}
+          {% assign feature = block.settings.metaobject %}
+          <div class="editorial-feature" {{ block.shopify_attributes }}
+            style="--band-height: {{ block.settings.band_height }}px; --hero-width: {{ block.settings.hero_width }}px; --small-width: {{ block.settings.small_width }}px; --tertiary-width: {{ block.settings.tertiary_width }}px; --hpad: {{ block.settings.horizontal_padding }}vw; --voffset: {{ block.settings.vertical_offset }}px; --title-size: {{ block.settings.heading_size }}px; --title-weight: {{ block.settings.heading_weight }}; --title-col: {{ block.settings.heading_colour }}; --band-col: {{ block.settings.band_colour }};">
+            <div class="editorial-feature__stage">
+              <div class="editorial-feature__band" aria-hidden="true"></div>
+
+              {%- assign hero_image = feature.hero_image | default: feature.image | default: feature.featured_image -%}
+              {%- assign small_image = feature.secondary_image | default: feature.supporting_image -%}
+              {%- assign tertiary_image = feature.tertiary_image | default: feature.bottom_image -%}
+
+              {% if hero_image != blank %}
+                <figure class="polaroid polaroid--hero">
+                  <div class="polaroid__frame">
+                    <img src="{{ hero_image | image_url: width: 800 }}" alt="{{ hero_image.alt | default: block.settings.hero_caption_override | escape }}" loading="lazy" width="{{ hero_image.width }}" height="{{ hero_image.height }}">
+                  </div>
+                  {% assign hero_caption = block.settings.hero_caption_override | default: feature.hero_caption | default: feature.caption %}
+                  {% if hero_caption != blank %}
+                    <figcaption class="polaroid__caption">{{ hero_caption }}</figcaption>
+                  {% endif %}
+                </figure>
+              {% endif %}
+
+              {% if small_image != blank %}
+                <figure class="polaroid polaroid--small">
+                  <div class="polaroid__frame">
+                    <img src="{{ small_image | image_url: width: 600 }}" alt="{{ small_image.alt | escape }}" loading="lazy" width="{{ small_image.width }}" height="{{ small_image.height }}">
+                  </div>
+                  {% if feature.small_caption != blank %}
+                    <figcaption class="polaroid__caption">{{ feature.small_caption }}</figcaption>
+                  {% endif %}
+                </figure>
+              {% endif %}
+
+              {% if tertiary_image != blank %}
+                <figure class="polaroid polaroid--tertiary">
+                  <div class="polaroid__frame">
+                    <img src="{{ tertiary_image | image_url: width: 900 }}" alt="{{ tertiary_image.alt | escape }}" loading="lazy" width="{{ tertiary_image.width }}" height="{{ tertiary_image.height }}">
+                  </div>
+                  {% if feature.tertiary_caption != blank %}
+                    <figcaption class="polaroid__caption">{{ feature.tertiary_caption }}</figcaption>
+                  {% endif %}
+                </figure>
+              {% endif %}
+
+              <div class="editorial-feature__copy">
+                {% assign tag = feature.tag | default: feature.category %}
+                {% if tag != blank %}<p class="intro-text">{{ tag }}</p>{% endif %}
+                {% assign title_tag = block.settings.heading_tag | default: 'h2' %}
+                <{{ title_tag }} class="feature-title">{{ feature.title | default: feature.name | escape }}</{{ title_tag }}>
+                {% if feature.price_copy != blank %}
+                  <p class="feature-price">{{ feature.price_copy }}</p>
+                {% endif %}
+              </div>
+
+              {% if feature.description != blank %}
+                <div class="editorial-feature__description rte">{{ feature.description }}</div>
+              {% endif %}
+            </div>
+          </div>
       {% endcase %}
     {% endfor %}
   </div>
@@ -221,212 +158,90 @@
 {% schema %}
 {
   "name": "Detailed product builder",
-  "tag": "section",
-  "class": "section",
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading" },
-    { "type": "richtext", "id": "content", "label": "Content" }
+    { "type": "richtext", "id": "content", "label": "Intro content" }
   ],
   "blocks": [
-    {
-      "type": "editorial_product_feature",
-      "name": "Editorial product feature",
-      "settings": [
-        {
-          "type": "metaobject",
-          "id": "metaobject",
-          "label": "Editorial product metaobject",
-          "metaobject_type": "editorial_product_feature"
-        },
-        { "type": "text", "id": "hero_caption_override", "label": "Hero caption override" },
-        {
-          "type": "select",
-          "id": "heading_tag",
-          "label": "Heading tag",
-          "default": "h2",
-          "options": [
-            { "value": "h1", "label": "H1" },
-            { "value": "h2", "label": "H2" },
-            { "value": "h3", "label": "H3" }
-          ]
-        },
-        {
-          "type": "range",
-          "id": "heading_size",
-          "label": "Heading size (px)",
-          "min": 20,
-          "max": 64,
-          "step": 1,
-          "default": 28
-        },
-        {
-          "type": "range",
-          "id": "heading_weight",
-          "label": "Heading weight",
-          "min": 300,
-          "max": 900,
-          "step": 50,
-          "default": 700
-        },
-        { "type": "color", "id": "heading_colour", "label": "Heading colour", "default": "#000000" },
-        { "type": "color", "id": "band_colour", "label": "Band colour", "default": "#ffd200" }
-      ]
-    }
+    { "type": "text", "name": "Text", "settings": [ { "type": "text", "id": "text", "label": "Text" } ] },
+    { "type": "subheading", "name": "Subheading", "settings": [ { "type": "text", "id": "subheading", "label": "Subheading" } ] },
+    { "type": "spacer", "name": "Spacer", "settings": [ { "type": "range", "id": "height", "label": "Height", "min": 8, "max": 200, "step": 4, "default": 40 } ] },
+    { "type": "richtext", "name": "Rich text", "settings": [ { "type": "richtext", "id": "richtext", "label": "Content" } ] },
+    { "type": "image", "name": "Image", "settings": [
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "text", "id": "alt", "label": "Alt text" },
+      { "type": "text", "id": "caption", "label": "Caption" },
+      { "type": "range", "id": "max_width", "label": "Max width (px)", "min": 100, "max": 1600, "step": 20, "default": 800 },
+      { "type": "select", "id": "alignment", "label": "Alignment", "default": "center", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" } ] }
+    ] },
+    { "type": "button", "name": "Button", "settings": [
+      { "type": "url", "id": "link", "label": "Link" },
+      { "type": "text", "id": "label", "label": "Label" },
+      { "type": "select", "id": "alignment", "label": "Alignment", "default": "center", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" } ] }
+    ] },
+    { "type": "divider", "name": "Divider", "settings": [] },
+    { "type": "liquid", "name": "Custom liquid", "settings": [ { "type": "liquid", "id": "custom_liquid", "label": "Liquid" } ] },
+    { "type": "product", "name": "Product", "settings": [ { "type": "product", "id": "product", "label": "Product" } ] },
+    { "type": "collection", "name": "Collection", "settings": [
+      { "type": "collection", "id": "collection", "label": "Collection" },
+      { "type": "range", "id": "limit", "label": "Product limit", "min": 2, "max": 12, "step": 1, "default": 4 },
+      { "type": "range", "id": "columns", "label": "Columns", "min": 2, "max": 4, "step": 1, "default": 4 }
+    ] },
+    { "type": "video", "name": "Video (YouTube/Vimeo)", "settings": [
+      { "type": "text", "id": "video_url", "label": "Video URL" },
+      { "type": "select", "id": "alignment", "label": "Alignment", "default": "center", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" } ] }
+    ] },
+    { "type": "editorial_product_feature", "name": "Editorial product feature", "limit": 1, "settings": [
+      { "type": "metaobject", "id": "metaobject", "label": "Editorial product metaobject", "metaobject_type": "editorial_product_feature" },
+      { "type": "text", "id": "hero_caption_override", "label": "Hero caption override" },
+      { "type": "range", "id": "band_height", "label": "Band height (px)", "min": 120, "max": 400, "step": 10, "default": 260 },
+      { "type": "range", "id": "hero_width", "label": "Hero width (px)", "min": 180, "max": 420, "step": 10, "default": 270 },
+      { "type": "range", "id": "small_width", "label": "Small image width (px)", "min": 140, "max": 320, "step": 10, "default": 200 },
+      { "type": "range", "id": "tertiary_width", "label": "Bottom image width (px)", "min": 240, "max": 560, "step": 20, "default": 360 },
+      { "type": "range", "id": "horizontal_padding", "label": "Horizontal padding (vw)", "min": 2, "max": 15, "step": 1, "default": 8 },
+      { "type": "range", "id": "vertical_offset", "label": "Vertical offset top (px)", "min": 0, "max": 160, "step": 5, "default": 40 },
+      { "type": "select", "id": "heading_tag", "label": "Heading tag", "default": "h2", "options": [ { "value": "h1", "label": "H1" }, { "value": "h2", "label": "H2" }, { "value": "h3", "label": "H3" } ] },
+      { "type": "range", "id": "heading_size", "label": "Heading size (px)", "min": 20, "max": 64, "step": 1, "default": 28 },
+      { "type": "range", "id": "heading_weight", "label": "Heading weight", "min": 300, "max": 900, "step": 50, "default": 700 },
+      { "type": "color", "id": "heading_colour", "label": "Heading colour", "default": "#000000" },
+      { "type": "color", "id": "band_colour", "label": "Band colour", "default": "#ffd200" }
+    ] }
   ],
-  "presets": [{ "name": "Detailed product builder" }]
+  "presets": [ { "name": "Detailed product builder" } ]
 }
 {% endschema %}
 
 {% stylesheet %}
-  .section--detailed-product-builder {
-    padding: 2rem 0;
-  }
-  .builder-divider {
-    margin: 2rem 0;
-    opacity: 0.25;
-  }
-  .builder-button .button {
-    margin-top: 0.5rem;
-  }
-  .builder-collection .grid {
-    row-gap: 2rem;
-  }
-
-  /* Editorial feature redesigned */
-  .editorial-feature {
-    --polaroid-bg: #f2f2f2;
-    --polaroid-pad: 0.85rem;
-    --scribble-font: var(--font-heading-family);
-    position: relative;
-  }
-  .feature-canvas {
-    position: relative;
-    width: 100%;
-    min-height: 400px;
-    background: #000;
-    padding: 6rem 0 5rem;
-  }
-  .feature-band {
-    position: absolute;
-    top: 5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100vw;
-    height: 230px;
-    background: var(--band-col, #ffd200);
-  }
-
-  .polaroid {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    background: var(--polaroid-bg);
-    box-shadow: 0 12px 26px -4px rgba(0, 0, 0, 0.35);
-  }
-  .polaroid__frame {
-    padding: var(--polaroid-pad);
-  }
-  .polaroid__frame img {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-  }
-  .polaroid__caption {
-    font-family: var(--scribble-font);
-    font-size: clamp(12px, 1.1vw, 16px);
-    padding: 0 0.85rem 0.9rem;
-    line-height: 1.1;
-  }
-
-  .polaroid--hero {
-    top: 2.5rem;
-    left: min(8vw, 7rem);
-    width: clamp(220px, 25vw, 270px);
-  }
-  .polaroid--small {
-    top: 11rem;
-    right: min(9vw, 8rem);
-    width: clamp(170px, 18vw, 200px);
-  }
-  .polaroid--tertiary {
-    bottom: 1.5rem;
-    right: min(6vw, 6rem);
-    width: clamp(260px, 30vw, 360px);
-  }
-
-  .feature-intro-copy {
-    position: absolute;
-    top: 6.2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 700px;
-    width: 60%;
-    color: #000;
-    font-family: var(--font-body-family);
-  }
-  .feature-intro-copy .intro-text {
-    font-size: clamp(12px, 0.9vw, 15px);
-    line-height: 1.55;
-  }
-  .feature-title {
-    font-family: var(--font-heading-family);
-    font-size: var(--title-size, 28px);
-    font-weight: var(--title-weight, 700);
-    color: var(--title-col, #000);
-    margin: 1.25rem 0 0.2rem;
-    line-height: 1.15;
-  }
-  .feature-price {
-    font-size: clamp(11px, 0.8vw, 14px);
-    margin: 0;
-  }
-
-  .feature-description {
-    position: absolute;
-    bottom: 10.5rem;
-    left: min(8vw, 7rem);
-    max-width: clamp(260px, 28vw, 380px);
-    color: #fff;
-    font-size: clamp(11px, 0.85vw, 14px);
-    line-height: 1.55;
-  }
-  @media (max-width: 1100px) {
-    .feature-canvas {
-      padding-bottom: 8rem;
-    }
-    .feature-description {
-      position: static;
-      max-width: 60ch;
-      margin: 2rem auto 0;
-    }
-    .polaroid--tertiary {
-      position: static;
-      margin: 2.5rem auto 0;
-    }
-    .polaroid--small {
-      top: auto;
-      right: auto;
-      position: static;
-      margin: 2rem auto 0;
-    }
-    .polaroid--hero {
-      position: static;
-      left: auto;
-      top: auto;
-    }
-    .feature-intro-copy {
-      position: static;
-      transform: none;
-      width: 100%;
-      margin: 2rem auto 0;
-    }
-    .feature-band {
-      position: static;
-      width: 100%;
-      height: auto;
-      transform: none;
-      padding: 3rem 0;
-    }
-  }
-{% endstylesheet %}
+.section--detailed-product-builder { padding: 2rem 0; }
+.builder-divider { margin: 2rem 0; opacity: .25; }
+.builder-button .button { margin-top: .5rem; }
+.builder-collection .grid { display:grid; grid-template-columns:repeat(var(--grid-cols),1fr); gap:1.5rem; }
+.builder-video .video-wrapper { position:relative; padding-bottom:56.25%; height:0; }
+.builder-video iframe { position:absolute; inset:0; width:100%; height:100%; }
+.builder-image { margin:2rem auto; }
+.builder-image__caption { font-size:.85rem; opacity:.7; margin-top:.25rem; text-align:center; }
+/* Editorial feature layout */
+.editorial-feature { position:relative; }
+.editorial-feature__stage { position:relative; background:#000; overflow:hidden; min-height:calc(var(--band-height) + 18rem); }
+.editorial-feature__band { position:absolute; top:var(--voffset); left:0; width:100%; height:var(--band-height); background:var(--band-col,#ffd200); }
+.polaroid { position:absolute; display:flex; flex-direction:column; background:#f2f2f2; box-shadow:0 10px 22px -4px rgba(0,0,0,.35); }
+.polaroid__frame { padding:.85rem; }
+.polaroid__frame img { width:100%; height:auto; display:block; }
+.polaroid__caption { font-family:var(--font-heading-family); font-size:clamp(12px,1.05vw,16px); padding:0 .8rem .75rem; line-height:1.1; }
+.polaroid--hero { top:calc(var(--voffset) - 1.5rem); left:var(--hpad); width:var(--hero-width); }
+.polaroid--small { top:calc(var(--voffset) + 5rem); right:var(--hpad); width:var(--small-width); }
+.polaroid--tertiary { bottom:2.5rem; right:calc(var(--hpad) - 1vw); width:var(--tertiary-width); }
+.editorial-feature__copy { position:absolute; top:calc(var(--voffset) + (var(--band-height) / 2)); transform:translateY(-50%); left:50%; width:min(42ch,40%); color:#000; font-family:var(--font-body-family); }
+.editorial-feature__copy .intro-text { font-size:clamp(12px,.95vw,15px); line-height:1.5; margin:0; }
+.editorial-feature .feature-title { font-family:var(--font-heading-family); font-size:var(--title-size,28px); font-weight:var(--title-weight,700); color:var(--title-col,#000); margin:1.1rem 0 .3rem; line-height:1.12; }
+.editorial-feature .feature-price { font-size:clamp(11px,.8vw,14px); margin:0; }
+.editorial-feature__description { position:absolute; bottom:calc(var(--tertiary-width) + 2.5rem); left:var(--hpad); max-width:clamp(240px,28vw,380px); color:#fff; font-size:clamp(11px,.85vw,14px); line-height:1.55; }
+@media (max-width:1100px){
+  .editorial-feature__stage { padding:3rem 1.25rem 4rem; }
+  .editorial-feature__band { position:static; height:auto; min-height:var(--band-height); margin:0 -1.25rem; }
+  .polaroid, .polaroid--hero, .polaroid--small, .polaroid--tertiary { position:static; width:100%; max-width:340px; margin:2rem auto 0; }
+  .editorial-feature__copy { position:static; transform:none; left:auto; width:100%; margin:2rem auto 0; }
+  .editorial-feature__description { position:static; max-width:60ch; margin:2.5rem auto 0; color:#fff; }
+}
+{% endstylesheet %}{%- comment -%}
+{%- endcomment -%}
