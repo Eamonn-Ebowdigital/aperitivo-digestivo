@@ -435,10 +435,11 @@
   }
   .editorial-feature__band {
     position: absolute;
-    width: 99.9%; /* 1300/1301 */
+    width: 100vw; /* 1300/1301 */
     height: 27.7%; /* 399/1438 */
-    left: 0%;
+    left: 0;
     top: 14.4%; /* 207/1438 */
+    right: 0;
     background: var(--band-col, #f6c100);
     z-index: 2;
   }
@@ -581,14 +582,12 @@
     }
     .editorial-feature__band {
       position: static;
-      width: 100vw;
+      width: calc(100% + 2rem);
       height: auto;
       min-height: 100px;
       margin: 2rem -1rem;
-      left: 0;
-      right: 0;
+      left: auto;
       top: auto;
-      display: block;
     }
     .polaroid,
     .polaroid--hero,
