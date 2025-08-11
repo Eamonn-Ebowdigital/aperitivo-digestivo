@@ -26,7 +26,7 @@
       "custom_css": [
         "img {object-fit: contain;}",
         ".image-with-text__content {padding-right: 0;}",
-        "h2 {font-size: clamp(5em, 1.4vw, 2.5em);}"
+        "h2 {font-size: clamp(5em, 1em, 1.5em)}"
       ],
       "name": "t:sections.image-with-text.presets.name",
       "settings": {
