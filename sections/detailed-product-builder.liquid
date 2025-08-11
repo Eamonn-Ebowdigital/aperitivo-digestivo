@@ -117,18 +117,17 @@
         {% when 'editorial_product_feature' %}
           {% assign feature = block.settings.metaobject %}
           <div
+            class="editorial-feature__band"
+            aria-hidden="true"
+            style="background-color: {{ block.settings.band_colour }};"
+          >
+            &nbsp;
+          </div>
+          <div
             class="editorial-feature"
             {{ block.shopify_attributes }}
           >
             <div class="editorial-feature__stage">
-              <div
-                class="editorial-feature__band"
-                aria-hidden="true"
-                style="background-color: {{ block.settings.band_colour }};"
-              >
-                &nbsp;
-              </div>
-
               <!-- Main title at top -->
               <div class="editorial-feature__main-title" style="color: {{ block.settings.heading_colour }};">
                 {{ feature.title | default: feature.name | escape }}
