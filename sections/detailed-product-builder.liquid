@@ -20,6 +20,7 @@
       {% case block.type %}
         {% when 'editorial_product_feature' %}
           {% assign feature = block.settings.metaobject %}
+          {%- assign featured_product = feature.linked_product | default: feature.featured_product | default: feature.product -%}
           <div
             class="editorial-feature__band"
             aria-hidden="true"
@@ -110,13 +111,23 @@
                   <p class="intro-text">{{ tag }}</p>
                 {% endif %}
                 {% assign title_tag = block.settings.heading_tag | default: 'h2' %}
-                <{{ title_tag }} class="feature-title">
-                  {{- feature.linked_product.title | default: 'Product Title' | escape -}}
-                </{{ title_tag }}>
-                {% if feature.price != blank %}
-                  <p class="feature-price">{{ feature.linked_product.price | money }}</p>
+                
+                {% if featured_product != blank %}
+                  <{{ title_tag }} class="feature-title">
+                    <a href="{{ featured_product.url }}" class="feature-product-link">
+                      {{- featured_product.title | escape -}}
+                    </a>
+                  </{{ title_tag }}>
+                  <p class="feature-price">{{ featured_product.price | money }}</p>
                 {% else %}
-                  <p class="feature-price">£XX</p>
+                  <{{ title_tag }} class="feature-title">
+                    {{- feature.product_name | default: 'Product Title' | escape -}}
+                  </{{ title_tag }}>
+                  {% if feature.price != blank %}
+                    <p class="feature-price">{{ feature.price }}</p>
+                  {% else %}
+                    <p class="feature-price">£XX</p>
+                  {% endif %}
                 {% endif %}
               </div>
 
@@ -129,6 +140,14 @@
                   our Aperitivo Digestivo vintage corkscrew on the back. The premium quality fabric and sturdy collar
                   construction ensures that this T-Shirt will be a wardrobe staple for years to come. It's available in
                   both white and navy.
+                </div>
+              {% endif %}
+
+              {% if featured_product != blank and block.settings.show_product_button %}
+                <div class="editorial-feature__cta">
+                  <a href="{{ featured_product.url }}" class="button button--primary">
+                    {{ block.settings.button_text | default: 'Shop Now' | escape }}
+                  </a>
                 </div>
               {% endif %}
             </div>
@@ -368,7 +387,13 @@
           ]
         },
         { "type": "color", "id": "heading_colour", "label": "Heading colour", "default": "#000000" },
-        { "type": "color", "id": "band_colour", "label": "Band colour", "default": "#ffd200" }
+        { "type": "color", "id": "band_colour", "label": "Band colour", "default": "#ffd200" },
+        {
+          "type": "header",
+          "content": "Product button"
+        },
+        { "type": "checkbox", "id": "show_product_button", "label": "Show product button", "default": false },
+        { "type": "text", "id": "button_text", "label": "Button text", "default": "Shop Now" }
       ]
     },
     {
@@ -692,6 +717,14 @@
     margin: 0;
     line-height: 1.5;
   }
+  .editorial-feature .feature-product-link {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+  .editorial-feature .feature-product-link:hover {
+    opacity: 0.7;
+  }
   .editorial-feature .feature-price {
     font-size: clamp(14px, 1.5vw, 20px);
     margin: 0;
@@ -710,6 +743,17 @@
     font-weight: 400;
     line-height: 1.5;
     z-index: 4;
+  }
+  .editorial-feature__cta {
+    position: absolute;
+    left: 6.8%; /* 89/1301 */
+    top: 85%; /* Below description */
+    z-index: 4;
+  }
+  .editorial-feature__cta .button {
+    font-size: clamp(14px, 1.5vw, 18px);
+    padding: 0.8rem 2rem;
+    font-family: 'Playfair Display', var(--font-heading-family);
   }
   .editorial-feature__intro-text {
     position: absolute;
@@ -800,6 +844,13 @@
       position: static;
       width: 100%;
       margin: 2rem auto 0;
+      left: auto;
+      top: auto;
+    }
+    .editorial-feature__cta {
+      position: static;
+      margin: 2rem auto 0;
+      text-align: center;
       left: auto;
       top: auto;
     }
