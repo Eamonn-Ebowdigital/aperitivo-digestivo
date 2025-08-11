@@ -111,10 +111,10 @@
                 {% endif %}
                 {% assign title_tag = block.settings.heading_tag | default: 'h2' %}
                 <{{ title_tag }} class="feature-title">
-                  {{- feature.product_name | default: 'Negroni T-Shirt' | escape -}}
+                  {{- feature.linked_product.title | default: 'Negroni T-Shirt' | escape -}}
                 </{{ title_tag }}>
                 {% if feature.price != blank %}
-                  <p class="feature-price">{{ feature.price }}</p>
+                  <p class="feature-price">{{ feature.linked_product.price | money }}</p>
                 {% else %}
                   <p class="feature-price">£XX</p>
                 {% endif %}
@@ -153,16 +153,19 @@
               assign columns_mobile_int = block.settings.columns_mobile | plus: 0
               assign show_mobile_slider = false
               assign column_blocks = section.blocks | where: 'type', 'column'
-              
+
               if block.settings.swipe_on_mobile and column_blocks.size > columns_mobile_int
                 assign show_mobile_slider = true
               endif
             -%}
-            
+
             <div class="multicolumn color-{{ block.settings.color_scheme }} gradient{% unless block.settings.background_style == 'none' and settings.text_boxes_border_thickness > 0 or settings.text_boxes_shadow_opacity > 0 %} background-{{ block.settings.background_style }}{% endunless %}{% if block.settings.title == blank %} no-heading{% endif %}">
-              <div class="page-width section-{{ section.id }}-{{ block.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-                   {% if settings.animations_reveal_on_scroll %}data-cascade{% endif %}>
-                
+              <div
+                class="page-width section-{{ section.id }}-{{ block.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {% if settings.animations_reveal_on_scroll %}
+                  data-cascade
+                {% endif %}
+              >
                 {%- unless block.settings.title == blank -%}
                   <div class="title-wrapper-with-link title-wrapper--self-padded-mobile title-wrapper--no-top-margin multicolumn__title">
                     <h2 class="title inline-richtext {{ block.settings.heading_size }}">
@@ -175,12 +178,13 @@
                     {%- endif -%}
                   </div>
                 {%- endunless -%}
-                
+
                 <slider-component class="slider-mobile-gutter">
-                  <ul class="multicolumn-list contains-content-container grid grid--{{ block.settings.columns_mobile }}-col-tablet-down grid--{{ block.settings.columns_desktop }}-col-desktop{% if show_mobile_slider %} slider slider--tablet grid--peek{% endif %}"
-                      id="Slider-{{ block.id }}"
-                      role="list">
-                    
+                  <ul
+                    class="multicolumn-list contains-content-container grid grid--{{ block.settings.columns_mobile }}-col-tablet-down grid--{{ block.settings.columns_desktop }}-col-desktop{% if show_mobile_slider %} slider slider--tablet grid--peek{% endif %}"
+                    id="Slider-{{ block.id }}"
+                    role="list"
+                  >
                     {%- liquid
                       assign highest_ratio = 0
                       for column_block in column_blocks
@@ -189,31 +193,37 @@
                         endif
                       endfor
                     -%}
-                    
+
                     {%- for column_block in column_blocks -%}
                       {%- assign empty_column = '' -%}
-                      {%- if column_block.settings.image == blank and column_block.settings.title == blank and column_block.settings.text == blank and column_block.settings.link_label == blank -%}
+                      {%- if column_block.settings.image == blank
+                        and column_block.settings.title == blank
+                        and column_block.settings.text == blank
+                        and column_block.settings.link_label == blank
+                      -%}
                         {%- assign empty_column = ' multicolumn-list__item--empty' -%}
                       {%- endif -%}
-                      
-                      <li class="multicolumn-list__item grid__item{% if block.settings.swipe_on_mobile %} slider__slide{% endif %}{% if block.settings.column_alignment == 'center' %} center{% endif %}{{ empty_column }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-                          {{ column_block.shopify_attributes }}
-                          {% if settings.animations_reveal_on_scroll %}
-                            data-cascade
-                            style="--animation-order: {{ forloop.index }};"
-                          {% endif %}>
-                        
+
+                      <li
+                        class="multicolumn-list__item grid__item{% if block.settings.swipe_on_mobile %} slider__slide{% endif %}{% if block.settings.column_alignment == 'center' %} center{% endif %}{{ empty_column }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                        {{ column_block.shopify_attributes }}
+                        {% if settings.animations_reveal_on_scroll %}
+                          data-cascade
+                          style="--animation-order: {{ forloop.index }};"
+                        {% endif %}
+                      >
                         <div class="multicolumn-card content-container">
                           {%- if column_block.settings.image != blank -%}
                             {% if block.settings.image_ratio == 'adapt' or block.settings.image_ratio == 'circle' %}
                               {% assign spaced_image = true %}
                             {% endif %}
                             <div class="multicolumn-card__image-wrapper multicolumn-card__image-wrapper--{{ block.settings.image_width }}-width{% if block.settings.image_width != 'full' or spaced_image %} multicolumn-card-spacing{% endif %}">
-                              <div class="media media--transparent media--{{ block.settings.image_ratio }}"
-                                   {% if block.settings.image_ratio == 'adapt' %}
-                                     style="padding-bottom: {{ 1 | divided_by: highest_ratio | times: 100 }}%;"
-                                   {% endif %}>
-                                
+                              <div
+                                class="media media--transparent media--{{ block.settings.image_ratio }}"
+                                {% if block.settings.image_ratio == 'adapt' %}
+                                  style="padding-bottom: {{ 1 | divided_by: highest_ratio | times: 100 }}%;"
+                                {% endif %}
+                              >
                                 {%- liquid
                                   assign number_of_columns = block.settings.columns_desktop
                                   assign number_of_columns_mobile = block.settings.columns_mobile
@@ -228,14 +238,14 @@
                                     assign image_width = 1
                                   endif
                                 -%}
-                                
+
                                 {% capture sizes %}
                                   (min-width: {{ settings.page_width }}px) calc(({{ settings.page_width }}px - {{ grid_space_desktop }}) * {{ image_width }} /  {{ number_of_columns }}),
                                   (min-width: 990px) calc((100vw - {{ grid_space_desktop }}) * {{ image_width }} / {{ number_of_columns }}),
                                   (min-width: 750px) calc((100vw - {{ grid_space_tablet }}) * {{ image_width }} / {{ number_of_columns_mobile }}),
                                   calc((100vw - {{ grid_space_mobile }}) * {{ image_width }} / {{ number_of_columns_mobile }})
                                 {% endcapture %}
-                                
+
                                 {{
                                   column_block.settings.image
                                   | image_url: width: 3200
@@ -247,7 +257,7 @@
                               </div>
                             </div>
                           {%- endif -%}
-                          
+
                           <div class="multicolumn-card__info">
                             {%- if column_block.settings.title != blank -%}
                               <h3 class="inline-richtext">{{ column_block.settings.title }}</h3>
@@ -256,12 +266,14 @@
                               <div class="rte">{{ column_block.settings.text }}</div>
                             {%- endif -%}
                             {%- if column_block.settings.link_label != blank -%}
-                              <a class="link animate-arrow"
-                                 {% if column_block.settings.link == blank %}
-                                   role="link" aria-disabled="true"
-                                 {% else %}
-                                   href="{{ column_block.settings.link }}"
-                                 {% endif %}>
+                              <a
+                                class="link animate-arrow"
+                                {% if column_block.settings.link == blank %}
+                                  role="link" aria-disabled="true"
+                                {% else %}
+                                  href="{{ column_block.settings.link }}"
+                                {% endif %}
+                              >
                                 {{- column_block.settings.link_label | escape -}}
                                 <span class="svg-wrapper">
                                   <span class="icon-wrap">&nbsp;{{ 'icon-arrow.svg' | inline_asset_content }}</span>
@@ -273,11 +285,15 @@
                       </li>
                     {%- endfor -%}
                   </ul>
-                  
+
                   {%- if show_mobile_slider -%}
                     <div class="slider-buttons large-up-hide">
-                      <button type="button" class="slider-button slider-button--prev" name="previous"
-                              aria-label="{{ 'general.slider.previous_slide' | t }}">
+                      <button
+                        type="button"
+                        class="slider-button slider-button--prev"
+                        name="previous"
+                        aria-label="{{ 'general.slider.previous_slide' | t }}"
+                      >
                         <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
                       </button>
                       <div class="slider-counter caption">
@@ -286,22 +302,28 @@
                         <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
                         <span class="slider-counter--total">{{ column_blocks.size }}</span>
                       </div>
-                      <button type="button" class="slider-button slider-button--next" name="next"
-                              aria-label="{{ 'general.slider.next_slide' | t }}">
+                      <button
+                        type="button"
+                        class="slider-button slider-button--next"
+                        name="next"
+                        aria-label="{{ 'general.slider.next_slide' | t }}"
+                      >
                         <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
                       </button>
                     </div>
                   {%- endif -%}
                 </slider-component>
-                
+
                 <div class="center{% if show_mobile_slider %} small-hide medium-hide{% endif %}">
                   {%- if block.settings.button_label != blank -%}
-                    <a class="button button--primary"
-                       {% if block.settings.button_link == blank %}
-                         role="link" aria-disabled="true"
-                       {% else %}
-                         href="{{ block.settings.button_link }}"
-                       {% endif %}>
+                    <a
+                      class="button button--primary"
+                      {% if block.settings.button_link == blank %}
+                        role="link" aria-disabled="true"
+                      {% else %}
+                        href="{{ block.settings.button_link }}"
+                      {% endif %}
+                    >
                       {{ block.settings.button_label | escape }}
                     </a>
                   {%- endif -%}
