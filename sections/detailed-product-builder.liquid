@@ -119,19 +119,25 @@
           <div
             class="editorial-feature"
             {{ block.shopify_attributes }}
-            style="--title-col: {{ block.settings.heading_colour }}; --band-col: {{ block.settings.band_colour }};"
           >
             <div class="editorial-feature__stage">
-              <div class="editorial-feature__band" aria-hidden="true"></div>
-              
+              <div
+                class="editorial-feature__band"
+                aria-hidden="true"
+                style="background-color: {{ block.settings.band_colour }};"
+              ></div>
+
               <!-- Main title at top -->
-              <div class="editorial-feature__main-title">
+              <div class="editorial-feature__main-title" style="color: {{ block.settings.heading_colour }};">
                 {{ feature.title | default: feature.name | escape }}
               </div>
-              
+
               <!-- Intro text in top right -->
               <div class="editorial-feature__intro-text">
-                {{ feature.intro_text | default: "In the face of a World driven by hype, fast fashion and rapidly changing trends we create high quality, timeless and joyful garments that will stand the test of time. We work with amazing artists and manufacturers who produce for very well-known luxury brands to bring you premium products that make a statement." }}
+                {{
+                  feature.intro_text
+                  | default: 'In the face of a World driven by hype, fast fashion and rapidly changing trends we create high quality, timeless and joyful garments that will stand the test of time. We work with amazing artists and manufacturers who produce for very well-known luxury brands to bring you premium products that make a statement.'
+                }}
               </div>
 
               {%- assign hero_image = feature.hero_image | default: feature.image | default: feature.featured_image -%}
@@ -149,7 +155,10 @@
                       height="564"
                     >
                   </div>
-                  {% assign hero_caption = block.settings.hero_caption_override | default: feature.hero_caption | default: feature.caption %}
+                  {% assign hero_caption = block.settings.hero_caption_override
+                    | default: feature.hero_caption
+                    | default: feature.caption
+                  %}
                   {% if hero_caption != blank %}
                     <figcaption class="polaroid__caption">{{ hero_caption }}</figcaption>
                   {% endif %}
@@ -197,7 +206,7 @@
                 {% endif %}
                 {% assign title_tag = block.settings.heading_tag | default: 'h2' %}
                 <{{ title_tag }} class="feature-title">
-                  {{- feature.product_name | default: "Negroni T-Shirt" | escape -}}
+                  {{- feature.product_name | default: 'Negroni T-Shirt' | escape -}}
                 </{{ title_tag }}>
                 {% if feature.price_copy != blank %}
                   <p class="feature-price">{{ feature.price_copy }}</p>
@@ -210,7 +219,11 @@
                 <div class="editorial-feature__description rte">{{ feature.description }}</div>
               {% else %}
                 <div class="editorial-feature__description">
-                  The 'Negroni' T-Shirt is 100% heavyweight cotton, designed for durability and longevity. It features original artwork from London Artist Toby Ursell, including our classic Negroni motif on the chest and our Aperitivo Digestivo vintage corkscrew on the back. The premium quality fabric and sturdy collar construction ensures that this T-Shirt will be a wardrobe staple for years to come. It's available in both white and navy.
+                  The 'Negroni' T-Shirt is 100% heavyweight cotton, designed for durability and longevity. It features
+                  original artwork from London Artist Toby Ursell, including our classic Negroni motif on the chest and
+                  our Aperitivo Digestivo vintage corkscrew on the back. The premium quality fabric and sturdy collar
+                  construction ensures that this T-Shirt will be a wardrobe staple for years to come. It's available in
+                  both white and navy.
                 </div>
               {% endif %}
             </div>
@@ -397,12 +410,12 @@
     text-align: center;
   }
   /* Editorial feature layout - Responsive percentage-based positioning */
-  .editorial-feature { 
-    position: relative; 
-    margin: 4rem 0; 
+  .editorial-feature {
+    position: relative;
+    margin: 4rem 0;
   }
-  .editorial-feature__stage { 
-    position: relative; 
+  .editorial-feature__stage {
+    position: relative;
     width: 100%;
     max-width: 1301px;
     height: 0;
@@ -420,93 +433,93 @@
     background: white;
     z-index: 1;
   }
-  .editorial-feature__band { 
-    position: absolute; 
+  .editorial-feature__band {
+    position: absolute;
     width: 99.9%; /* 1300/1301 */
     height: 27.7%; /* 399/1438 */
-    left: 0%; 
+    left: 0%;
     top: 14.4%; /* 207/1438 */
-    background: var(--band-col, #F6C100);
+    background: var(--band-col, #f6c100);
     z-index: 2;
   }
-  .polaroid { 
-    position: absolute; 
+  .polaroid {
+    position: absolute;
     z-index: 3;
     background: transparent;
     padding: 0;
     box-shadow: none;
   }
-  .polaroid__frame { 
+  .polaroid__frame {
     position: relative;
     background: transparent;
   }
-  .polaroid__frame img { 
-    width: 100%; 
-    height: auto; 
-    display: block; 
+  .polaroid__frame img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
-  .polaroid__caption { 
+  .polaroid__caption {
     display: none; /* Hide captions to match reference */
   }
-  .polaroid--hero { 
+  .polaroid--hero {
     width: 36.4%; /* 474.25/1301 */
-    left: 14.3%; /* 186/1301 */
+    left: 10%; /* 186/1301 */
     top: 8.2%; /* 118/1438 */
     transform: none;
   }
-  .polaroid--small { 
+  .polaroid--small {
     width: 21.1%; /* 274.12/1301 */
     left: 75%; /* 976/1301 */
     top: 27.1%; /* 390/1438 */
     transform: none;
   }
-  .polaroid--tertiary { 
+  .polaroid--tertiary {
     width: 31.2%; /* 406.14/1301 */
     left: 61%; /* 794/1301 */
     top: 52.2%; /* 751/1438 */
     transform: none;
   }
-  .editorial-feature__copy { 
-    position: absolute; 
+  .editorial-feature__copy {
+    position: absolute;
     width: 15.2%; /* 198/1301 */
     left: 50.2%; /* 653/1301 */
     top: 34.8%; /* 500/1438 */
-    color: black; 
+    color: black;
     font-size: clamp(14px, 1.5vw, 20px);
-    font-family: 'Playfair Display', var(--font-heading-family); 
-    font-weight: 400; 
+    font-family: 'Playfair Display', var(--font-heading-family);
+    font-weight: 400;
     line-height: 1.5;
     z-index: 4;
     text-align: left;
     padding: 0;
   }
-  .editorial-feature__copy .intro-text { 
+  .editorial-feature__copy .intro-text {
     display: none; /* Hide intro text to match reference */
   }
-  .editorial-feature .feature-title { 
-    font-family: 'Playfair Display', var(--font-heading-family); 
+  .editorial-feature .feature-title {
+    font-family: 'Playfair Display', var(--font-heading-family);
     font-size: clamp(14px, 1.5vw, 20px);
-    font-weight: 400; 
-    color: var(--title-col, black); 
-    margin: 0; 
-    line-height: 1.5; 
+    font-weight: 400;
+    color: var(--title-col, black);
+    margin: 0;
+    line-height: 1.5;
   }
-  .editorial-feature .feature-price { 
+  .editorial-feature .feature-price {
     font-size: clamp(14px, 1.5vw, 20px);
-    margin: 0; 
-    font-weight: 400; 
+    margin: 0;
+    font-weight: 400;
     font-family: 'Playfair Display', var(--font-heading-family);
     line-height: 1.5;
   }
-  .editorial-feature__description { 
-    position: absolute; 
+  .editorial-feature__description {
+    position: absolute;
     width: 44.8%; /* 583/1301 */
     left: 6.8%; /* 89/1301 */
     top: 57.7%; /* 830/1438 */
-    color: black; 
+    color: black;
     font-size: clamp(16px, 1.8vw, 24px);
-    font-family: 'Playfair Display', var(--font-heading-family); 
-    font-weight: 400; 
+    font-family: 'Playfair Display', var(--font-heading-family);
+    font-weight: 400;
     line-height: 1.5;
     z-index: 4;
   }
@@ -515,10 +528,10 @@
     width: 38%; /* 495/1301 */
     left: 55.4%; /* 721/1301 */
     top: 3.8%; /* 54/1438 */
-    color: black; 
+    color: black;
     font-size: clamp(16px, 1.8vw, 24px);
-    font-family: 'Playfair Display', var(--font-heading-family); 
-    font-weight: 400; 
+    font-family: 'Playfair Display', var(--font-heading-family);
+    font-weight: 400;
     line-height: 1.5;
     z-index: 4;
   }
@@ -527,10 +540,10 @@
     width: 27.7%; /* 360/1301 */
     left: 5.9%; /* 77/1301 */
     top: 0%;
-    color: black; 
+    color: black;
     font-size: clamp(24px, 3.7vw, 48px);
-    font-family: 'Playfair Display', var(--font-heading-family); 
-    font-weight: 400; 
+    font-family: 'Playfair Display', var(--font-heading-family);
+    font-weight: 400;
     line-height: 1;
     z-index: 4;
     display: flex;
@@ -575,7 +588,10 @@
       left: auto;
       top: auto;
     }
-    .polaroid, .polaroid--hero, .polaroid--small, .polaroid--tertiary {
+    .polaroid,
+    .polaroid--hero,
+    .polaroid--small,
+    .polaroid--tertiary {
       position: static;
       width: 100%;
       max-width: 300px;
