@@ -26,7 +26,7 @@
       "custom_css": [
         "img {object-fit: contain;}",
         ".image-with-text__content {padding-right: 0;}",
-        "h2 {font-size: clamp(5em, 1em, 1.5em)}"
+        "h2 {font-size: clamp(5em, 1em, 1.5em);}"
       ],
       "name": "t:sections.image-with-text.presets.name",
       "settings": {
@@ -105,7 +105,7 @@
         "image_width": "full",
         "image_ratio": "adapt",
         "button_label": "Explore the range",
-        "button_link": "",
+        "button_link": "shopify://collections",
         "columns_desktop": 4,
         "column_alignment": "left",
         "background_style": "none",
