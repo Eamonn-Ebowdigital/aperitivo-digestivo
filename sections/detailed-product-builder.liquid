@@ -210,7 +210,7 @@
                   {{- feature.product_name | default: 'Negroni T-Shirt' | escape -}}
                 </{{ title_tag }}>
                 {% if feature.price_copy != blank %}
-                  <p class="feature-price">{{ feature.price_copy }}</p>
+                  <p class="feature-price">£{{ feature.price_copy }}</p>
                 {% else %}
                   <p class="feature-price">£XX</p>
                 {% endif %}
@@ -437,7 +437,7 @@
   .editorial-feature__band {
     position: absolute;
     width: 100vw;
-    height: 400px;
+    height: 460px;
     left: 0;
     right: 0;
     display: initial;
