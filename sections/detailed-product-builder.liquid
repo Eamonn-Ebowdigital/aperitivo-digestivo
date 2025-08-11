@@ -35,26 +35,35 @@
               assign featured_product = feature.shop_product.value
             endif
           -%}
-          
+
           {%- comment -%} Debug output - remove this after testing {%- endcomment -%}
           {% if block.settings.debug_mode %}
             <div style="background: #f0f0f0; padding: 1rem; margin: 1rem 0; font-family: monospace; font-size: 12px;">
               <strong>Debug Info:</strong><br>
-              feature.linked_product: {{ feature.linked_product }}<br>
-              feature.linked_product.value: {{ feature.linked_product.value }}<br>
-              feature.featured_product: {{ feature.featured_product }}<br>
-              feature.featured_product.value: {{ feature.featured_product.value }}<br>
-              feature.product: {{ feature.product }}<br>
-              feature.product.value: {{ feature.product.value }}<br>
-              featured_product: {{ featured_product }}<br>
+              feature.linked_product: {{ feature.linked_product -}}
+              <br>
+              feature.linked_product.value: {{ feature.linked_product.value -}}
+              <br>
+              feature.featured_product: {{ feature.featured_product -}}
+              <br>
+              feature.featured_product.value: {{ feature.featured_product.value -}}
+              <br>
+              feature.product: {{ feature.product -}}
+              <br>
+              feature.product.value: {{ feature.product.value -}}
+              <br>
+              featured_product: {{ featured_product -}}
+              <br>
               {% if featured_product != blank %}
-                featured_product.title: {{ featured_product.title }}<br>
-                featured_product.price: {{ featured_product.price }}<br>
+                featured_product.title: {{ featured_product.title -}}
+                <br>
+                featured_product.price: {{ featured_product.price -}}
+                <br>
                 featured_product.url: {{ featured_product.url }}
               {% endif %}
             </div>
           {% endif %}
-          
+
           <div
             class="editorial-feature__band"
             aria-hidden="true"
@@ -145,7 +154,7 @@
                   <p class="intro-text">{{ tag }}</p>
                 {% endif %}
                 {% assign title_tag = block.settings.heading_tag | default: 'h2' %}
-                
+
                 {% if featured_product != blank %}
                   <{{ title_tag }} class="feature-title">
                     <a href="{{ featured_product.url }}" class="feature-product-link">
@@ -733,9 +742,8 @@
   }
   .editorial-feature__copy {
     position: absolute;
-    width: 15.2%; /* 198/1301 */
-    left: 50.2%; /* 653/1301 */
-    top: 34.8%; /* 500/1438 */
+    left: 50.2%;
+    top: 34.8%;
     color: black;
     font-size: clamp(14px, 1.5vw, 20px);
     font-family: 'Playfair Display', var(--font-heading-family);
