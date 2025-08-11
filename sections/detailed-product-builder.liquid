@@ -111,7 +111,7 @@
                 {% endif %}
                 {% assign title_tag = block.settings.heading_tag | default: 'h2' %}
                 <{{ title_tag }} class="feature-title">
-                  {{- feature.linked_product.title | default: 'Negroni T-Shirt' | escape -}}
+                  {{- feature.linked_product.title | default: 'Product Title' | escape -}}
                 </{{ title_tag }}>
                 {% if feature.price != blank %}
                   <p class="feature-price">{{ feature.linked_product.price | money }}</p>
