@@ -20,7 +20,41 @@
       {% case block.type %}
         {% when 'editorial_product_feature' %}
           {% assign feature = block.settings.metaobject %}
-          {%- assign featured_product = feature.linked_product | default: feature.featured_product | default: feature.product -%}
+          {%- liquid
+            assign featured_product = feature.linked_product.value
+            if featured_product == blank
+              assign featured_product = feature.featured_product.value
+            endif
+            if featured_product == blank
+              assign featured_product = feature.product.value
+            endif
+            if featured_product == blank
+              assign featured_product = feature.related_product.value
+            endif
+            if featured_product == blank
+              assign featured_product = feature.shop_product.value
+            endif
+          -%}
+          
+          {%- comment -%} Debug output - remove this after testing {%- endcomment -%}
+          {% if block.settings.debug_mode %}
+            <div style="background: #f0f0f0; padding: 1rem; margin: 1rem 0; font-family: monospace; font-size: 12px;">
+              <strong>Debug Info:</strong><br>
+              feature.linked_product: {{ feature.linked_product }}<br>
+              feature.linked_product.value: {{ feature.linked_product.value }}<br>
+              feature.featured_product: {{ feature.featured_product }}<br>
+              feature.featured_product.value: {{ feature.featured_product.value }}<br>
+              feature.product: {{ feature.product }}<br>
+              feature.product.value: {{ feature.product.value }}<br>
+              featured_product: {{ featured_product }}<br>
+              {% if featured_product != blank %}
+                featured_product.title: {{ featured_product.title }}<br>
+                featured_product.price: {{ featured_product.price }}<br>
+                featured_product.url: {{ featured_product.url }}
+              {% endif %}
+            </div>
+          {% endif %}
+          
           <div
             class="editorial-feature__band"
             aria-hidden="true"
@@ -393,7 +427,12 @@
           "content": "Product button"
         },
         { "type": "checkbox", "id": "show_product_button", "label": "Show product button", "default": false },
-        { "type": "text", "id": "button_text", "label": "Button text", "default": "Shop Now" }
+        { "type": "text", "id": "button_text", "label": "Button text", "default": "Shop Now" },
+        {
+          "type": "header",
+          "content": "Debug"
+        },
+        { "type": "checkbox", "id": "debug_mode", "label": "Show debug info", "default": false }
       ]
     },
     {
