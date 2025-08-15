@@ -16,7 +16,7 @@
           "type": "heading",
           "settings": {
             "heading": "Products infused with the passion, precision and artistry of culinary culture.",
-            "heading_size": "hxxl"
+            "heading_size": "hxl"
           }
         }
       },
@@ -25,8 +25,7 @@
       ],
       "custom_css": [
         "img {object-fit: contain;}",
-        ".image-with-text__content {padding-right: 0;}",
-        "h2 {font-size: clamp(5em, 1em, 1.5em);}"
+        ".image-with-text__content {padding-right: 0;}"
       ],
       "name": "t:sections.image-with-text.presets.name",
       "settings": {
